@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
   updatedBy: String,
   createdAt: {
     type: Date,
-    default: new Date(),
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
