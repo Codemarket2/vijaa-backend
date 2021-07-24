@@ -1,9 +1,9 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 export const DB = async (DB_STRING?: string) => {
   try {
     if (!process.env.DATABASE) {
-      throw new Error('Database connection string not found');
+      throw new Error("Database connection string not found");
     }
     await mongoose.connect(DB_STRING || process.env.DATABASE, {
       useNewUrlParser: true,
@@ -11,9 +11,9 @@ export const DB = async (DB_STRING?: string) => {
       useFindAndModify: false,
       useUnifiedTopology: true,
     });
-    console.log('DB Connection Successfull!');
+    console.log("DB Connection Successfull!");
   } catch (error) {
-    console.log('DB Connection Failed');
+    console.log("DB Connection Failed");
     throw error;
   }
 };

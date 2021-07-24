@@ -1,41 +1,58 @@
-import '../jest/jestSetup';
-import { handler } from '../src/user';
+import "../jest/jestSetup";
+import { handler } from "../src/user";
 import {
   mockUser,
   mockUserId,
   createMockEvent,
-} from '../jest/defaultArguments';
+} from "../jest/defaultArguments";
 
 const updatedMockUser = {
   ...mockUser,
-  name: 'Elliot',
-  email: 'elliot@domain.com',
+  name: "Elliot",
+  email: "elliot@domain.com",
 };
 
-const createUserEvent = createMockEvent('createUser', mockUser);
-const getUsersEvent = createMockEvent('getUsers');
-const getUserByCognitoUserIdEvent = createMockEvent('getUserByCognitoUserId', {
+const updateMockUserProfile = {
+  ...mockUser,
+  name: "Elliot",
+  email: "elliot@domain.com",
+  userProfile: {
+    cancerType: "bone cancer",
+    doctors: [{ name: "sachin", hospital: "city hospital" }],
+    symptoms: ["vitamin deficiency"],
+  },
+};
+
+const createUserEvent = createMockEvent("createUser", mockUser);
+const getUsersEvent = createMockEvent("getUsers");
+
+const getUserByCognitoUserIdEvent = createMockEvent("getUserByCognitoUserId", {
   userId: mockUser.userId,
 });
-const updateUserEvent = createMockEvent('updateUser', updatedMockUser);
-const updateUserStatusEvent = createMockEvent('updateUserStatus', {
+const updateUserEvent = createMockEvent("updateUser", updatedMockUser);
+const updateUserStatusEvent = createMockEvent("updateUserStatus", {
   ...mockUser,
   status: false,
 });
 
-jest.mock('../src/user/utils/helper', () => {
-  const adminToggleUserStatus = () => console.log('adminToggleUserStatus mock');
+const updateUserProfileEvent = createMockEvent(
+  "updateUserProfile",
+  updateMockUserProfile
+);
+
+jest.mock("../src/user/utils/helper", () => {
+  const adminToggleUserStatus = () => console.log("adminToggleUserStatus mock");
   return { adminToggleUserStatus };
 });
 
-describe('User Lambda Tests', () => {
-  it('getUsers test', async () => {
+describe("User Lambda Tests", () => {
+  it("getUsers test", async () => {
     const users = await handler(getUsersEvent);
     expect(users.count).toBe(0);
     expect(users.users.length).toBe(0);
   });
 
-  it('createUser test', async () => {
+  it("createUser test", async () => {
     const newUser = await handler(createUserEvent);
     expect(newUser._id).toBeDefined();
     expect(newUser.name).toBe(mockUser.name);
@@ -46,7 +63,7 @@ describe('User Lambda Tests', () => {
     expect(newUser.active).toBe(true);
   });
 
-  it('getUserByCognitoUserId test', async () => {
+  it("getUserByCognitoUserId test", async () => {
     await handler(createUserEvent);
     const user = await handler(getUserByCognitoUserIdEvent);
     expect(user._id).toBeDefined();
@@ -58,7 +75,7 @@ describe('User Lambda Tests', () => {
     expect(user.active).toBe(true);
   });
 
-  it('updateUser test', async () => {
+  it("updateUser test", async () => {
     await handler(createUserEvent);
     const user = await handler(updateUserEvent);
     expect(user._id).toBeDefined();
@@ -70,7 +87,31 @@ describe('User Lambda Tests', () => {
     expect(user.active).toBe(true);
   });
 
-  it('updateUserStatus test', async () => {
+  it("updateUserProfile Test", async () => {
+    await handler(createUserEvent);
+    const user = await handler(updateUserProfileEvent);
+    expect(user._id).toBeDefined();
+    expect(user.name).toBe(updateMockUserProfile.name);
+    expect(user.email).toBe(updateMockUserProfile.email);
+    expect(user.picture).toBe(updateMockUserProfile.picture);
+    expect(user.userId).toBe(updateMockUserProfile.userId);
+    expect(user.createdBy).toBe(mockUserId);
+    expect(user.active).toBe(true);
+    expect(user.userProfile.cancerType).toBe(
+      updateMockUserProfile.userProfile.cancerType
+    );
+    expect(user.userProfile.doctors[0].name).toBe(
+      updateMockUserProfile.userProfile.doctors[0].name
+    );
+    expect(user.userProfile.doctors[0].hospital).toBe(
+      updateMockUserProfile.userProfile.doctors[0].hospital
+    );
+    expect(user.userProfile.symptoms[0]).toBe(
+      updateMockUserProfile.userProfile.symptoms[0]
+    );
+  });
+
+  it("updateUserStatus test", async () => {
     await handler(createUserEvent);
     const user = await handler(updateUserStatusEvent);
     expect(user._id).toBeDefined();

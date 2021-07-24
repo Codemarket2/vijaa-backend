@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 const subscriptionSchema = new mongoose.Schema({
   active: {
@@ -12,6 +12,16 @@ const subscriptionSchema = new mongoose.Schema({
   expiringOn: Date,
 });
 
+const userProfileSchema = new mongoose.Schema({
+  cancerType: String,
+  dateOfDiagnose: {
+    type: Date,
+    default: new Date(),
+  },
+  doctors: [{ name: String, hospital: String }],
+  symptoms: [String],
+});
+
 const userSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   name: String,
@@ -19,7 +29,7 @@ const userSchema = new mongoose.Schema({
   picture: {
     type: String,
     default:
-      'https://codemarket-common-bucket.s3.amazonaws.com/public/defaults/pictures/default.jpg',
+      "https://codemarket-common-bucket.s3.amazonaws.com/public/defaults/pictures/default.jpg",
   },
   active: {
     type: Boolean,
@@ -29,7 +39,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  createdBy: { type: String, default: 'PreSignUp_SignUp' },
+  createdBy: { type: String, default: "PreSignUp_SignUp" },
   updatedBy: String,
   createdAt: {
     type: Date,
@@ -41,11 +51,12 @@ const userSchema = new mongoose.Schema({
   stripeCustomer: String,
   stripeAccount: String,
   subscription: { type: subscriptionSchema },
+  userProfile: { type: userProfileSchema },
 });
 
 userSchema.index({ userId: 1 });
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model("User", userSchema);
 
 // export User
 // const User = mongoose.model('user', userSchema);

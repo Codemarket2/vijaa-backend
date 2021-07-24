@@ -21,6 +21,7 @@ type Query {
   ): UserSearch @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   getUser(_id: ID!): User @aws_api_key @aws_cognito_user_pools
   getUserByCognitoUserId(userId: String!): User
+  getUserProfile(_id: ID!): User
   getLists(page: Int, limit: Int, active: Boolean): Lists
   getList(_id: ID!): List
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
@@ -57,6 +58,7 @@ type Mutation {
     picture: String
     subscription: SubscriptionInput
   ): User
+  updateUserProfile(userId: String!, userProfile: UserProfileInput): User
   updateUserStatus(userId: String!, updatedBy: String!, status: Boolean!): User
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   cancelUserSubscription(userId: String!): User
@@ -143,6 +145,7 @@ type User @aws_api_key @aws_cognito_user_pools {
   updatedAt: String
   updatedBy: String
   subscription: TSubscription
+  userProfile: UserProfile
 }
 
 type TSubscription {
@@ -188,4 +191,27 @@ input ListItemInput {
   title: String
   description: String
   active: Boolean
+}
+
+type Doctors {
+  name: String
+  hospital: String
+}
+
+input DoctorsInput {
+  name: String
+  hospital: String
+}
+
+type UserProfile {
+  dateOfDiagnose: AWSDateTime
+  doctors: [Doctors]
+  symptoms: [String]
+  cancerType: String
+}
+input UserProfileInput {
+  dateOfDiagnose: AWSDateTime
+  doctors: [DoctorsInput]
+  symptoms: [String]
+  cancerType: String
 }

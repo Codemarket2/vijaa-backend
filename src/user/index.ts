@@ -1,8 +1,8 @@
 /* eslint-disable no-case-declarations */
-import { DB } from '../utils/DB';
-import { User } from './utils/userModel';
-import { adminToggleUserStatus } from './utils/helper';
-import { AppSyncEvent } from '../utils/cutomTypes';
+import { DB } from "../utils/DB";
+import { User } from "./utils/userModel";
+import { adminToggleUserStatus } from "./utils/helper";
+import { AppSyncEvent } from "../utils/cutomTypes";
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -15,14 +15,14 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     let count = 0;
 
     switch (fieldName) {
-      case 'getUsers':
+      case "getUsers":
         const {
           page = 1,
           limit = 10,
-          search = '',
+          search = "",
           lowerRange = null,
           higherRange = null,
-          sortBy = '-createdAtDate',
+          sortBy = "-createdAtDate",
           active = null,
         } = args;
 
@@ -41,10 +41,10 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           ...tempFilter,
           $or: [
             {
-              email: { $regex: search, $options: 'i' },
+              email: { $regex: search, $options: "i" },
             },
             {
-              name: { $regex: search, $options: 'i' },
+              name: { $regex: search, $options: "i" },
             },
           ],
         })
@@ -57,10 +57,10 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           ...tempFilter,
           $or: [
             {
-              email: { $regex: search, $options: 'i' },
+              email: { $regex: search, $options: "i" },
             },
             {
-              name: { $regex: search, $options: 'i' },
+              name: { $regex: search, $options: "i" },
             },
           ],
         });
@@ -69,18 +69,20 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           users,
           count,
         };
-      case 'getUser':
+      case "getUser":
         return await User.findById(args._id);
-      case 'getUserByCognitoUserId':
+      case "getUserProfile":
+        return await User.findById(args._id);
+      case "getUserByCognitoUserId":
         return await User.findOne({
           userId: args.userId,
         });
-      case 'createUser':
+      case "createUser":
         return await User.create({
           ...args,
           createdBy: identity.claims.sub,
         });
-      case 'updateUserStatus':
+      case "updateUserStatus":
         await adminToggleUserStatus(args.userId, args.status);
         return await User.findOneAndUpdate(
           {
@@ -96,7 +98,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
             runValidators: true,
           }
         );
-      case 'cancelUserSubscription':
+      case "cancelUserSubscription":
         tempSubscription = {
           active: false,
           subscriptionType: null,
@@ -119,7 +121,19 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
             runValidators: false,
           }
         );
-      case 'updateUser':
+      case "updateUser":
+        return await User.findOneAndUpdate(
+          {
+            userId: args.userId,
+          },
+          { ...args, updatedAt: new Date() },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+
+      case "updateUserProfile":
         return await User.findOneAndUpdate(
           {
             userId: args.userId,
@@ -132,7 +146,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         );
       default:
         throw new Error(
-          'Something went wrong! Please check your resolver mapping template'
+          "Something went wrong! Please check your resolver mapping template"
         );
     }
   } catch (error) {
@@ -141,3 +155,13 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     throw error2;
   }
 };
+
+// case "updateUserProfile":
+//   return await User.findByIdAndUpdate(
+//     identity.claims["custom:_id"],
+//     { ...args, updatedAt: new Date() },
+//     {
+//       new: true,
+//       runValidators: true,
+//     }
+//   );
