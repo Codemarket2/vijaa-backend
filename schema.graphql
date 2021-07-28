@@ -21,7 +21,7 @@ type Query {
   ): UserSearch @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   getUser(_id: ID!): User @aws_api_key @aws_cognito_user_pools
   getUserByCognitoUserId(userId: String!): User
-  getUserProfile(_id: ID!): User
+  getUserProfile: User
   getLists(page: Int, limit: Int, active: Boolean): Lists
   getList(_id: ID!): List
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
@@ -58,7 +58,7 @@ type Mutation {
     picture: String
     subscription: SubscriptionInput
   ): User
-  updateUserProfile(userId: String!, userProfile: UserProfileInput): User
+  updateUserProfile(userProfile: UserProfileInput): User
   updateUserStatus(userId: String!, updatedBy: String!, status: Boolean!): User
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   cancelUserSubscription(userId: String!): User

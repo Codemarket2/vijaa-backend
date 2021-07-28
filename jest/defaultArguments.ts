@@ -23,7 +23,7 @@ export const mockUser = {
   email: "mrrobot@domain.com",
   picture:
     "https://codemarket-common-bucket.s3.amazonaws.com/public/defaults/pictures/default.jpg",
-  userId: "7d8ca528-4931-4254-9273-ea5ee853f987",
+  userId: mockUserId, //"7d8ca528-4931-4254-9273-ea5ee853f987",
 };
 
 export const createMockEvent = (fieldName: string, args: any = {}) => {

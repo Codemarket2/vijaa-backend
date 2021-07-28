@@ -14,6 +14,7 @@ const updatedMockUser = {
 
 const updateMockUserProfile = {
   ...mockUser,
+  userId: mockUserId,
   name: "Elliot",
   email: "elliot@domain.com",
   userProfile: {
@@ -25,10 +26,11 @@ const updateMockUserProfile = {
 
 const createUserEvent = createMockEvent("createUser", mockUser);
 const getUsersEvent = createMockEvent("getUsers");
-
+const getUserProfileEvent = createMockEvent("getUserProfile");
 const getUserByCognitoUserIdEvent = createMockEvent("getUserByCognitoUserId", {
   userId: mockUser.userId,
 });
+
 const updateUserEvent = createMockEvent("updateUser", updatedMockUser);
 const updateUserStatusEvent = createMockEvent("updateUserStatus", {
   ...mockUser,
@@ -50,6 +52,30 @@ describe("User Lambda Tests", () => {
     const users = await handler(getUsersEvent);
     expect(users.count).toBe(0);
     expect(users.users.length).toBe(0);
+  });
+
+  it("getUserProfile Test", async () => {
+    await handler(createMockEvent("createUser", updateMockUserProfile));
+    const getUserProfile = await handler(getUserProfileEvent);
+    expect(getUserProfile._id).toBeDefined();
+    expect(getUserProfile.name).toBe(updateMockUserProfile.name);
+    expect(getUserProfile.email).toBe(updateMockUserProfile.email);
+    expect(getUserProfile.picture).toBe(updateMockUserProfile.picture);
+    expect(getUserProfile.userId).toBe(updateMockUserProfile.userId);
+    expect(getUserProfile.createdBy).toBe(mockUserId);
+    expect(getUserProfile.active).toBe(true);
+    expect(getUserProfile.userProfile.cancerType).toBe(
+      updateMockUserProfile.userProfile.cancerType
+    );
+    expect(getUserProfile.userProfile.doctors[0].name).toBe(
+      updateMockUserProfile.userProfile.doctors[0].name
+    );
+    expect(getUserProfile.userProfile.doctors[0].hospital).toBe(
+      updateMockUserProfile.userProfile.doctors[0].hospital
+    );
+    expect(getUserProfile.userProfile.symptoms[0]).toBe(
+      updateMockUserProfile.userProfile.symptoms[0]
+    );
   });
 
   it("createUser test", async () => {
@@ -88,7 +114,9 @@ describe("User Lambda Tests", () => {
   });
 
   it("updateUserProfile Test", async () => {
-    await handler(createUserEvent);
+    await handler(
+      createMockEvent("createUser", { ...mockUser, userId: mockUserId })
+    );
     const user = await handler(updateUserProfileEvent);
     expect(user._id).toBeDefined();
     expect(user.name).toBe(updateMockUserProfile.name);
