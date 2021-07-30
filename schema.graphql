@@ -41,6 +41,7 @@ type Query {
     search: String
   ): Bookmarks
   getBookmark(_id: ID!): Bookmark
+  getAbout: User
 }
 
 type Mutation {
@@ -58,6 +59,7 @@ type Mutation {
     picture: String
     subscription: SubscriptionInput
   ): User
+  createAbout(about: String): User
   updateUserProfile(userProfile: UserProfileInput): User
   updateUserStatus(userId: String!, updatedBy: String!, status: Boolean!): User
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
@@ -157,6 +159,7 @@ type User @aws_api_key @aws_cognito_user_pools {
   updatedBy: String
   subscription: TSubscription
   userProfile: UserProfile
+  about: String
 }
 
 type TSubscription {

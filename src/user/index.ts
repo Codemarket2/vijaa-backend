@@ -76,6 +76,10 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           // userId: args.userId,
           userId: identity.claims.sub,
         });
+      case "getAbout":
+        return await User.findOne({
+          userId: identity.claims.sub,
+        });
       case "getUserByCognitoUserId":
         return await User.findOne({
           userId: args.userId,
@@ -128,6 +132,18 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         return await User.findOneAndUpdate(
           {
             userId: args.userId,
+          },
+          { ...args, updatedAt: new Date() },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+
+      case "createAbout":
+        return await User.findOneAndUpdate(
+          {
+            userId: identity.claims.sub,
           },
           { ...args, updatedAt: new Date() },
           {

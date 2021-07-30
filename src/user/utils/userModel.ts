@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema({
   stripeAccount: String,
   subscription: { type: subscriptionSchema },
   userProfile: { type: userProfileSchema },
+  about: String,
 });
 
 userSchema.index({ userId: 1 });
