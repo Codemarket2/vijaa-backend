@@ -25,6 +25,7 @@ type Query {
   getLists(page: Int, limit: Int, active: Boolean): Lists
   getList(_id: ID!): List
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
+  getComments: Comments
   getMyPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getPostsByUserId(
     userId: ID!
@@ -34,6 +35,7 @@ type Query {
     search: String
   ): Posts @aws_api_key @aws_cognito_user_pools
   getPost(_id: ID!): Post
+  getComment(_id: ID!): Comment
   getMyBookmarks(
     page: Int
     limit: Int
@@ -91,8 +93,11 @@ type Mutation {
   deleteListItem(listId: ID!, _id: ID!): Boolean
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   createPost(body: String!, media: [MediaInput]): Post
+  createComment(body: String!): Comment
   updatePost(_id: ID!, body: String, media: [MediaInput]): Post
+  updateComment(_id: ID!, body: String): Comment
   deletePost(_id: ID!): Boolean
+  deleteComment(_id: ID!): Boolean
   createBookmark(parentId: String, bookmark: String!): Bookmark
   updateBookmark(_id: ID!, parentId: String, bookmark: String): Bookmark
   deleteBookmark(_id: ID!): Boolean
@@ -120,12 +125,25 @@ type Posts @aws_api_key @aws_cognito_user_pools {
   count: Int
 }
 
+type Comments @aws_api_key @aws_cognito_user_pools {
+  data: [Comment]
+}
+
 type Post @aws_api_key @aws_cognito_user_pools {
   _id: ID
   body: String
   media: [Media]
   createdBy: User
   updatedBy: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Comment @aws_api_key @aws_cognito_user_pools {
+  _id: ID
+  body: String
+  parentId: Post
+  createdBy: User
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
