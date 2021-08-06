@@ -12,6 +12,17 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     const user = await getCurretnUser(identity);
     let tempComment: any;
 
+    const userSelect = "name email";
+    const userPopulate = {
+      path: "createdBy",
+      select: userSelect,
+    };
+    const parentIdSelect = "_id";
+    const parentIdPopulate = {
+      path: "parentId",
+      select: parentIdSelect,
+    };
+    let data: any = [];
     switch (fieldName) {
       case "createComment": {
         return await Comment.create({
@@ -23,8 +34,9 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         return await Comment.findById(args._id);
       }
 
-      case "getComments": {
-        return await Comment.find({});
+      case "getCommentsByParentID": {
+        data = await Comment.find({ parentId: args.parentId });
+        return { data };
       }
       case "updateComment": {
         tempComment = await Comment.findOneAndUpdate(

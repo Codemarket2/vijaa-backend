@@ -1,6 +1,6 @@
 export const commentResolvers = {
-  "Query  getComment": "commentLambda",
-  "Query  getComments": "commentLambda",
+  "Query getComment": "commentLambda",
+  "Query getCommentsByParentID": "commentLambda",
   "Mutation createComment": "commentLambda",
   "Mutation updateComment": "commentLambda",
   "Mutation deleteComment": "commentLambda",

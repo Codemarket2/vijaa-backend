@@ -25,7 +25,7 @@ type Query {
   getLists(page: Int, limit: Int, active: Boolean): Lists
   getList(_id: ID!): List
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
-  getComments: Comments
+  getCommentsByParentID(parentId: ID!): Comments
   getMyPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getPostsByUserId(
     userId: ID!
@@ -93,7 +93,7 @@ type Mutation {
   deleteListItem(listId: ID!, _id: ID!): Boolean
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   createPost(body: String!, media: [MediaInput]): Post
-  createComment(body: String!): Comment
+  createComment(parentId: ID!, body: String!): Comment
   updatePost(_id: ID!, body: String, media: [MediaInput]): Post
   updateComment(_id: ID!, body: String): Comment
   deletePost(_id: ID!): Boolean
@@ -125,10 +125,6 @@ type Posts @aws_api_key @aws_cognito_user_pools {
   count: Int
 }
 
-type Comments @aws_api_key @aws_cognito_user_pools {
-  data: [Comment]
-}
-
 type Post @aws_api_key @aws_cognito_user_pools {
   _id: ID
   body: String
@@ -139,13 +135,17 @@ type Post @aws_api_key @aws_cognito_user_pools {
   updatedAt: AWSDateTime
 }
 
-type Comment @aws_api_key @aws_cognito_user_pools {
+type Comment {
   _id: ID
   body: String
   parentId: Post
   createdBy: User
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+}
+
+type Comments {
+  data: [Comment]
 }
 
 type Media @aws_api_key @aws_cognito_user_pools {
