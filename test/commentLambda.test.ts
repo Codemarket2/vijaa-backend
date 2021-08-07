@@ -47,16 +47,16 @@ describe("Comment Lambda Test", () => {
     expect(comment.createdAt).toBeDefined();
   });
 
-  it("getCommentsByParentID Test", async () => {
-    await handler(createCommentEvent);
-    const res = await handler(
-      createMockEvent("getCommentsByParentID", {
-        parentId: "6107e825ff14da0870e4b62f",
-      })
-    );
-    const comment = res.data[0];
-    expect(comment.body).toBe(mockComment.body);
-  });
+  // it("getCommentsByParentID Test", async () => {
+  //   await handler(createCommentEvent);
+  //   const res = await handler(
+  //     createMockEvent("getCommentsByParentID", {
+  //       parentId: "6107e825ff14da0870e4b62f",
+  //     })
+  //   );
+  //   const comment = res.data[0];
+  //   expect(comment.body).toBe(mockComment.body);
+  // });
 
   it("deleteComment test", async () => {
     await handler(createCommentEvent);

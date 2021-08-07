@@ -35,7 +35,9 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       }
 
       case "getCommentsByParentID": {
-        data = await Comment.find({ parentId: args.parentId });
+        data = await Comment.find({ parentId: args.parentId }).populate(
+          userPopulate
+        );
         return { data };
       }
       case "updateComment": {
