@@ -7,13 +7,36 @@
     "sst:test": "sst test",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "*.graphql": [
+      "graphql-schema-linter path/to/*.graphql"
+    ]
+  },
+  "graphql-schema-linter": {
+    "rules": [
+      "enum-values-sorted-alphabetically"
+    ],
+    "schemaPaths": [
+      "path/to/my/schema/files/**.graphql"
+    ],
+    "customRulePaths": [
+      "path/to/my/custom/rules/*.js"
+    ],
+    "rulesOptions": {
+      "enum-values-sorted-alphabetically": {
+        "sortOrder": "lexicographical"
+      }
+    }
+  },
   "devDependencies": {
     "@aws-cdk/assert": "1.111.0",
     "@shelf/jest-mongodb": "^2.0.1",
     "@types/aws-lambda": "^8.10.70",
     "@types/mongoose": "^5.11.97",
+    "eslint-plugin-graphql": "^4.0.0",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
+    "lint-staged": "^11.1.2",
     "ts-jest": "^27.0.3"
   },
   "dependencies": {
@@ -26,6 +49,7 @@
     "aws-sdk": "^2.943.0",
     "immer": "^9.0.5",
     "mongodb-client-encryption": "^1.2.6",
-    "mongoose": "^5.13.2"
+    "mongoose": "^5.13.2",
+    "slugify": "^1.6.0"
   }
 }

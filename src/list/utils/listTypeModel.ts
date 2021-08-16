@@ -1,18 +1,23 @@
-import { Schema, model, Model, Document } from 'mongoose';
+import { Schema, model, Model } from 'mongoose';
+import { ISchema, IMedia } from '../../utils/cutomTypes';
 
-export interface IListtype extends Document {
-  name: string;
+export interface IListtype extends ISchema {
+  title: string;
+  description: string;
+  media: [IMedia];
   active: boolean;
   inUse: boolean;
-  createdBy: Schema.Types.ObjectId;
-  updatedBy?: Schema.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const ListTypeSchema = new Schema(
   {
-    name: String,
+    title: { type: String, unique: true },
+    slug: String,
+    description: String,
+    media: {
+      type: [{ url: String, caption: String }],
+      default: [],
+    },
     active: {
       type: Boolean,
       default: true,
@@ -32,6 +37,8 @@ const ListTypeSchema = new Schema(
   },
   { timestamps: true }
 );
+
+ListTypeSchema.index({ slug: 1 });
 
 const ListType: Model<IListtype> = model('ListType', ListTypeSchema);
 

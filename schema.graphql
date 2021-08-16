@@ -21,6 +21,7 @@ type Query {
   ): UserSearch @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   getUser(_id: ID!): User @aws_api_key @aws_cognito_user_pools
   getUserByCognitoUserId(userId: String!): User
+  getUserProfile: User
   getListTypes(
     page: Int
     limit: Int
@@ -34,9 +35,11 @@ type Query {
     search: String
     types: [ID]
   ): ListItems
-  getList(_id: ID!): List
+  getListType(_id: ID!): ListType
+  getListItem(_id: ID!): ListItem
+  getListTypeBySlug(slug: String!): ListType
+  getListItemBySlug(slug: String!): ListItem
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
-  getCommentsByParentID(parentId: ID!): Comments
   getMyPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getPostsByUserId(
     userId: ID!
@@ -46,7 +49,6 @@ type Query {
     search: String
   ): Posts @aws_api_key @aws_cognito_user_pools
   getPost(_id: ID!): Post
-  getComment(_id: ID!): Comment
   getMyBookmarks(
     page: Int
     limit: Int
@@ -54,7 +56,8 @@ type Query {
     search: String
   ): Bookmarks
   getBookmark(_id: ID!): Bookmark
-  getAbout: User
+  getFieldsByType(parentId: ID!, page: Int, limit: Int, search: String): Fields
+  getComment(_id: ID!): Comment
 }
 
 type Mutation {
@@ -70,14 +73,17 @@ type Mutation {
     name: String
     email: String
     picture: String
-    subscription: SubscriptionInput
   ): User
-  createAbout(about: String): User
-  updateUserProfile(userProfile: UserProfileInput): User
+
+  updateUserProfile(field: String, itemId: String!): User
   updateUserStatus(userId: String!, updatedBy: String!, status: Boolean!): User
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
-  cancelUserSubscription(userId: String!): User
-  createListType(name: String!, active: Boolean): ListType
+  createListType(
+    title: String!
+    description: String
+    media: [MediaInput]
+    active: Boolean
+  ): ListType
   createListItem(
     types: [ID!]
     title: String!
@@ -86,7 +92,13 @@ type Mutation {
     extra: [ExtraInput]
     active: Boolean
   ): ListItem
-  updateListType(_id: ID!, name: String, active: Boolean): ListType
+  updateListType(
+    _id: ID!
+    title: String
+    description: String
+    media: [MediaInput]
+    active: Boolean
+  ): ListType
   updateListItem(
     _id: ID!
     types: [ID]
@@ -99,14 +111,30 @@ type Mutation {
   deleteListItem(_id: ID!): Boolean
   deleteListType(_id: ID!): Boolean
   createPost(body: String!, media: [MediaInput]): Post
-  createComment(parentId: ID!, body: String!): Comment
   updatePost(_id: ID!, body: String, media: [MediaInput]): Post
-  updateComment(_id: ID!, body: String): Comment
   deletePost(_id: ID!): Boolean
-  deleteComment(_id: ID!): Boolean
   createBookmark(parentId: String, bookmark: String!): Bookmark
   updateBookmark(_id: ID!, parentId: String, bookmark: String): Bookmark
   deleteBookmark(_id: ID!): Boolean
+  createField(
+    parentId: ID!
+    label: String!
+    fieldType: String!
+    typeId: ID
+    multipleValues: Boolean
+  ): Field
+  updateField(
+    _id: ID!
+    label: String
+    fieldType: String
+    typeId: ID
+    multipleValues: Boolean
+  ): Field
+  deleteField(_id: ID!): Boolean
+
+  createComment(parentId: ID!, body: String!): Comment
+  updateComment(_id: ID!, body: String): Comment
+  deleteComment(_id: ID!): Boolean
 }
 
 type Bookmarks {
@@ -142,7 +170,7 @@ type Post @aws_api_key @aws_cognito_user_pools {
 type Comment {
   _id: ID
   body: String
-  parentId: ID
+  parentId: Post
   createdBy: User
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
@@ -179,31 +207,8 @@ type User @aws_api_key @aws_cognito_user_pools {
   createdBy: String
   updatedAt: String
   updatedBy: String
-  subscription: TSubscription
   userProfile: UserProfile
-  about: String
 }
-
-type TSubscription {
-  _id: ID
-  active: Boolean
-  subscriptionType: String
-  description: String
-  amount: Float
-  subscribedOn: AWSDateTime
-  expiringOn: AWSDateTime
-}
-
-input SubscriptionInput {
-  active: Boolean!
-  subscriptionType: String!
-  description: String!
-  amount: Float!
-  subscribedOn: AWSDateTime
-  expiringOn: AWSDateTime
-}
-
-union List = ListType | ListItem
 
 type ListTypes {
   data: [ListType]
@@ -212,9 +217,30 @@ type ListTypes {
 
 type ListType {
   _id: ID
-  name: String
+  title: String
+  slug: String
+  description: String
+  media: [Media]
+  # fields: [TypeField]
   active: Boolean
   inUse: Boolean
+}
+
+type Fields {
+  data: [Field]
+  count: Int
+}
+
+type Field {
+  _id: ID
+  label: String
+  multipleValues: Boolean
+  fieldType: String
+  typeId: ListType
+  createdBy: User
+  updatedBy: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type ListItems {
@@ -225,6 +251,7 @@ type ListItems {
 type ListItem {
   _id: ID
   title: String
+  slug: String
   description: String
   active: Boolean
   extra: [Extra]
@@ -242,25 +269,9 @@ input ExtraInput {
   value: String
 }
 
-type Doctors {
-  name: String
-  hospital: String
-}
-
-input DoctorsInput {
-  name: String
-  hospital: String
-}
-
 type UserProfile {
+  cancerType: [ListItem]
   dateOfDiagnose: AWSDateTime
-  doctors: [Doctors]
-  symptoms: [String]
-  cancerType: String
-}
-input UserProfileInput {
-  dateOfDiagnose: AWSDateTime
-  doctors: [DoctorsInput]
-  symptoms: [String]
-  cancerType: String
+  doctors: [ListItem]
+  symptoms: [ListItem]
 }

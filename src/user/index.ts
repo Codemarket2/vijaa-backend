@@ -4,6 +4,7 @@ import { User } from "./utils/userModel";
 import { adminToggleUserStatus } from "./utils/helper";
 import { AppSyncEvent } from "../utils/cutomTypes";
 import { getCurretnUser } from "../utils/authentication";
+import produce from "immer";
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -14,6 +15,23 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     let tempSubscription = {};
     let users: any = [];
     let count = 0;
+    let userProfile;
+
+    const selectFromItem = "title";
+    const populateFields = [
+      {
+        path: "userProfile.cancerType",
+        select: selectFromItem,
+      },
+      {
+        path: "userProfile.doctors",
+        select: selectFromItem,
+      },
+      {
+        path: "userProfile.symptoms",
+        select: selectFromItem,
+      },
+    ];
 
     const authUser = await getCurretnUser(identity);
 
@@ -78,7 +96,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         return await User.findOne({
           // userId: args.userId,
           userId: identity.claims.sub,
-        });
+        }).populate(populateFields);
       case "getAbout":
         return await User.findOne({
           userId: identity.claims.sub,
@@ -156,17 +174,16 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         );
 
       case "updateUserProfile":
-        return await User.findOneAndUpdate(
-          {
-            // userId: args.userId,
-            userId: identity.claims.sub,
-          },
-          { ...args, updatedAt: new Date() },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
+        userProfile = await User.findOne(authUser._id);
+        userProfile = {
+          ...userProfile,
+          [args.field]: [...userProfile[args.field], args.itemId],
+        };
+
+        return await User.findByIdAndUpdate(userProfile._id, {
+          userProfile,
+        });
+
       default:
         throw new Error(
           "Something went wrong! Please check your resolver mapping template"
