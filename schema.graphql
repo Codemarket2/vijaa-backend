@@ -21,8 +21,19 @@ type Query {
   ): UserSearch @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   getUser(_id: ID!): User @aws_api_key @aws_cognito_user_pools
   getUserByCognitoUserId(userId: String!): User
-  getUserProfile: User
-  getLists(page: Int, limit: Int, active: Boolean): Lists
+  getListTypes(
+    page: Int
+    limit: Int
+    active: Boolean
+    search: String
+  ): ListTypes
+  getListItems(
+    page: Int
+    limit: Int
+    active: Boolean
+    search: String
+    types: [ID]
+  ): ListItems
   getList(_id: ID!): List
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getCommentsByParentID(parentId: ID!): Comments
@@ -66,32 +77,27 @@ type Mutation {
   updateUserStatus(userId: String!, updatedBy: String!, status: Boolean!): User
     @aws_cognito_user_pools(cognito_groups: ["superadmin"])
   cancelUserSubscription(userId: String!): User
-  createList(name: String!, active: Boolean, items: [ListItemInput]): List
-    @aws_cognito_user_pools(cognito_groups: ["superadmin"])
-  updateList(
-    _id: ID!
-    name: String
-    active: Boolean
-    inUse: Boolean
-    items: [ListItemInput]
-  ): List @aws_cognito_user_pools(cognito_groups: ["superadmin"])
-  deleteList(_id: ID!): Boolean
-    @aws_cognito_user_pools(cognito_groups: ["superadmin"])
-  addListItem(
-    listId: ID!
-    title: String
+  createListType(name: String!, active: Boolean): ListType
+  createListItem(
+    types: [ID!]
+    title: String!
     description: String
+    media: [MediaInput]
+    extra: [ExtraInput]
     active: Boolean
-  ): List @aws_cognito_user_pools(cognito_groups: ["superadmin"])
+  ): ListItem
+  updateListType(_id: ID!, name: String, active: Boolean): ListType
   updateListItem(
-    listId: ID!
     _id: ID!
+    types: [ID]
     title: String
     description: String
+    media: [MediaInput]
+    extra: [ExtraInput]
     active: Boolean
-  ): List @aws_cognito_user_pools(cognito_groups: ["superadmin"])
-  deleteListItem(listId: ID!, _id: ID!): Boolean
-    @aws_cognito_user_pools(cognito_groups: ["superadmin"])
+  ): ListItem
+  deleteListItem(_id: ID!): Boolean
+  deleteListType(_id: ID!): Boolean
   createPost(body: String!, media: [MediaInput]): Post
   createComment(parentId: ID!, body: String!): Comment
   updatePost(_id: ID!, body: String, media: [MediaInput]): Post
@@ -102,8 +108,6 @@ type Mutation {
   updateBookmark(_id: ID!, parentId: String, bookmark: String): Bookmark
   deleteBookmark(_id: ID!): Boolean
 }
-
-# type Subscription {}
 
 type Bookmarks {
   data: [Bookmark]
@@ -199,17 +203,23 @@ input SubscriptionInput {
   expiringOn: AWSDateTime
 }
 
-type Lists {
-  data: [List]
+union List = ListType | ListItem
+
+type ListTypes {
+  data: [ListType]
   count: Int
 }
 
-type List {
+type ListType {
   _id: ID
   name: String
   active: Boolean
   inUse: Boolean
-  items: [ListItem]
+}
+
+type ListItems {
+  data: [ListItem]
+  count: Int
 }
 
 type ListItem {
@@ -217,12 +227,19 @@ type ListItem {
   title: String
   description: String
   active: Boolean
+  extra: [Extra]
+  media: [Media]
+  types: [ListType]
 }
 
-input ListItemInput {
-  title: String
-  description: String
-  active: Boolean
+type Extra {
+  key: String
+  value: String
+}
+
+input ExtraInput {
+  key: String
+  value: String
 }
 
 type Doctors {

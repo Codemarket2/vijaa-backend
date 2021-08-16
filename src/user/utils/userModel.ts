@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { Schema } from "mongoose";
 
 const subscriptionSchema = new mongoose.Schema({
   active: {
@@ -13,13 +14,13 @@ const subscriptionSchema = new mongoose.Schema({
 });
 
 const userProfileSchema = new mongoose.Schema({
-  cancerType: String,
+  cancerType: [{ type: Schema.Types.ObjectId, ref: "ListItem" }],
   dateOfDiagnose: {
     type: Date,
     default: new Date(),
   },
-  doctors: [{ name: String, hospital: String }],
-  symptoms: [String],
+  doctors: [{ type: Schema.Types.ObjectId, ref: "ListItem" }],
+  symptoms: [{ type: Schema.Types.ObjectId, ref: "ListItem" }],
 });
 
 const userSchema = new mongoose.Schema({
