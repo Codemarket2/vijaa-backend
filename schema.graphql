@@ -34,6 +34,13 @@ type Query {
     search: String
     types: [ID]
   ): ListItems
+  getListItemsWithFields(
+    page: Int
+    limit: Int
+    active: Boolean
+    search: String
+    types: [ID]
+  ): ListItems
   getListType(_id: ID!): ListType
   getListItem(_id: ID!): ListItem
   getListTypeBySlug(slug: String!): ListType
@@ -195,6 +202,7 @@ type Comment {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
+
 type Like {
   _id: ID
   like: Boolean
@@ -304,7 +312,7 @@ type FieldValues {
   count: Int
 }
 
-type FieldValue {
+type FieldValue @aws_api_key @aws_cognito_user_pools {
   _id: ID
   parentId: ID
   field: ID
@@ -330,4 +338,5 @@ type ListItem @aws_api_key @aws_cognito_user_pools {
   active: Boolean
   media: [Media]
   types: [ListType]
+  fields: [FieldValue]
 }
