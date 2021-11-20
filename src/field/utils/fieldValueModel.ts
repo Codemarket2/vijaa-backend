@@ -1,13 +1,16 @@
-import { Schema, model, Model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { ISchema } from '../../utils/cutomTypes';
 
 interface IFieldValue extends ISchema {
   field: string;
   value: string;
+  valueNumber: number;
+  valueBoolean: boolean;
+  valueDate: Date;
   itemId: string;
 }
 
-const FieldValueSchema = new Schema(
+const fieldValueSchema = new Schema<IFieldValue>(
   {
     parentId: {
       type: Schema.Types.ObjectId,
@@ -45,9 +48,9 @@ const FieldValueSchema = new Schema(
       ref: 'User',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const FieldValue: Model<IFieldValue> = model('FieldValue', FieldValueSchema);
+const FieldValue = model<IFieldValue>('FieldValue', fieldValueSchema);
 
 export default FieldValue;
