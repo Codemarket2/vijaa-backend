@@ -56,6 +56,9 @@ type Query {
   getListItemBySlug(slug: String!): ListItem
     @aws_api_key
     @aws_cognito_user_pools
+  getListItemWithFieldsBySlug(slug: String!): ListItemWithFields
+    @aws_api_key
+    @aws_cognito_user_pools
   getPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getMyPosts(page: Int, limit: Int, sortBy: String, search: String): Posts
   getPostsByUserId(
@@ -197,7 +200,6 @@ type Mutation {
   updateLike(_id: ID!): Like
   deleteLike(parentId: ID!): Boolean
 }
- 
 
 type Bookmarks {
   data: [Bookmark]
@@ -240,12 +242,6 @@ type Comments {
 type Likes {
   count: Int
   data: [Like]
-}
-
-type Logo{
-   _id: ID
-  logo: String;
-  description:String;
 }
 
 type actionCounts {
@@ -336,6 +332,21 @@ type Field @aws_api_key @aws_cognito_user_pools {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
+type Field2 @aws_api_key @aws_cognito_user_pools {
+  _id: ID
+  parentId: ID
+  position: Float
+  label: String
+  multipleValues: Boolean
+  oneUserMultipleValues: Boolean
+  fieldType: String
+  typeId: ListType
+  createdBy: User
+  updatedBy: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  fieldValues: [FieldValue]
+}
 
 type FieldValues @aws_api_key @aws_cognito_user_pools {
   data: [FieldValue]
@@ -372,4 +383,8 @@ type ListItem @aws_api_key @aws_cognito_user_pools {
   active: Boolean
   media: [Media]
   types: [ListType]
+}
+type ListItemWithFields @aws_api_key @aws_cognito_user_pools {
+  listItem: ListItem
+  fields: [Field2]
 }

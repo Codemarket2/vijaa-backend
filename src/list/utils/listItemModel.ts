@@ -3,6 +3,7 @@ import { Schema, model, Model, Document } from "mongoose";
 export interface IListItem extends Document {
   title: string;
   slug: string;
+  types?: any;
   description: string;
   media: [{ url: string; caption: string }];
   active: boolean;

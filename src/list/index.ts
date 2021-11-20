@@ -100,6 +100,41 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       case "getListItemBySlug": {
         return await ListItem.findOne({ slug: args.slug }).populate("types");
       }
+      case "getListItemWithFieldsBySlug": {
+        const listItem = await ListItem.findOne({ slug: args.slug }).populate(
+          "types"
+        );
+        const fields = await Field.aggregate([
+          { $match: { parentId: listItem?.types[0]?._id } },
+          {
+            $lookup: {
+              from: "fieldvalues",
+              let: {
+                id: "$_id",
+                parentId: listItem?._id,
+              },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ["$field", "$$id"] },
+                        { $eq: ["$parentId", "$$parentId"] },
+                      ],
+                    },
+                  },
+                },
+              ],
+              as: "fieldValues",
+            },
+          },
+        ]);
+        console.log("fields", fields);
+        return {
+          listItem,
+          fields,
+        };
+      }
       case "getListType": {
         return await ListType.findById(args._id);
       }
