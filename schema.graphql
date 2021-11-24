@@ -206,15 +206,12 @@ type Likes {
   data: [Like]
 }
 
-<<<<<<< HEAD
-=======
 type Logo {
   _id: ID
   logo: String
   description: String
 }
 
->>>>>>> 24e3c5f4d4687b7ffd03ad89bb2ce509e4e0140f
 type actionCounts {
   commentCount: Int
   likeCount: Int
