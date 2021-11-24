@@ -89,6 +89,7 @@ type Mutation {
     description: String
     media: [MediaInput]
     active: Boolean
+    layouts: AWSJSON
   ): ListItem
   updateListType(
     _id: ID!
@@ -104,6 +105,7 @@ type Mutation {
     description: String
     media: [MediaInput]
     active: Boolean
+    layouts: AWSJSON
   ): ListItem
   updatePublish(_id: ID!, publish: Boolean): ListItem
   updateAuthentication(_id: ID!, authenticateUser: Boolean): ListItem
@@ -351,6 +353,7 @@ type ListItem @aws_api_key @aws_cognito_user_pools {
   active: Boolean
   media: [Media]
   types: [ListType]
+  layouts: AWSJSON
 }
 type ListItemWithFields @aws_api_key @aws_cognito_user_pools {
   listItem: ListItem
