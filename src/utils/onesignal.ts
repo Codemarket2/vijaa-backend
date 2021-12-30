@@ -8,8 +8,8 @@ interface IPayload {
 
 export const sendPushNotification = function (payload: IPayload) {
   const data = {
-    app_id: 'd7a822b5-a821-460f-a60a-86d08d19e8f0', //production
-    // app_id: '7f0f54e4-44c9-44a1-a143-452fcef5ef9b', //dev
+    app_id: process.env.ONESIGNAL_APP_ID,
+
     headings: { en: payload.title },
     contents: { en: payload.message },
     channel_for_external_user_ids: 'push',
@@ -18,8 +18,7 @@ export const sendPushNotification = function (payload: IPayload) {
   const headers = {
     'Content-Type': 'application/json; charset=utf-8',
     host: 'onesignal.com',
-    Authorization: 'Basic MmNkMGI5M2EtZTcwMC00YTcxLTlhZTUtZjZhNzA3NDI1Y2Qx', //production
-    // Authorization: 'Basic OTRlYzQwYmEtYWFlNy00YWVmLThhZjktYWQxYTk1NzU5MTQy', //dev
+    Authorization: 'Basic ' + process.env.ONESIGNAL_API_KEY,
   };
 
   const options = {
