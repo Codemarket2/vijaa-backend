@@ -1,5 +1,4 @@
 import { AppSyncEvent } from '../utils/cutomTypes';
-import { NotificationModel } from './utils/notificationSchema';
 import { sendNotification } from './utils/sendNotification';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
