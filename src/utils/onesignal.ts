@@ -8,7 +8,7 @@ interface IPayload {
 
 export const sendPushNotification = function (payload: IPayload) {
   const data = {
-    app_id: process.env.ONESIGNAL_APP_ID,
+    app_id: process.env.ONESIGNAL_APP_ID || 'd7a822b5-a821-460f-a60a-86d08d19e8f0',
 
     headings: { en: payload.title },
     contents: { en: payload.message },
@@ -18,7 +18,7 @@ export const sendPushNotification = function (payload: IPayload) {
   const headers = {
     'Content-Type': 'application/json; charset=utf-8',
     host: 'onesignal.com',
-    Authorization: 'Basic ' + process.env.ONESIGNAL_API_KEY,
+    Authorization: 'Basic MmNkMGI5M2EtZTcwMC00YTcxLTlhZTUtZjZhNzA3NDI1Y2Qx', // + process.env.ONESIGNAL_API_KEY ||
   };
 
   const options = {
