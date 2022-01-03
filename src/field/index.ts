@@ -84,7 +84,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       case 'updateFieldByRelationId': {
         const field: any = await Field.findOneAndUpdate(
           { relationId: args.relationId, parentId: args.parentId },
-          args,
+          { ...args, relationId: args.relationId, parentId: args.parentId },
           {
             new: true,
             runValidators: true,
