@@ -45,6 +45,7 @@ export const sendNotification = async (payload: payload) => {
     };
     try {
       const notification = await NotificationModel.create(payload);
+      console.log(notification);
 
       await sendPushNotification(pushPayload);
       console.log('Notification pushed to devices');

@@ -15,3 +15,7 @@ type Mutation {
 type Subscription {
   notificationSub(userId: ID!): Notification @aws_subscribe(mutations: ["sendNotification"])
 }
+
+type Query {
+  getMyNotifications(userId: ID!): Notification @aws_api_key @aws_cognito_user_pools
+}
