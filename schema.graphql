@@ -80,6 +80,8 @@ type Mutation {
   deleteBookmark(_id: ID!): Boolean
   createField(
     parentId: ID!
+    relationId: ID
+    _id: ID
     label: String!
     fieldType: String!
     typeId: ID
@@ -88,9 +90,19 @@ type Mutation {
   ): Field
   updateField(
     _id: ID!
+    relationId: ID
     label: String
     fieldType: String
     typeId: ID
+    multipleValues: Boolean
+    oneUserMultipleValues: Boolean
+  ): Field
+  updateFieldByRelationId(
+    relationId: ID!
+    parentId: ID!
+    typeId: ID
+    label: String
+    fieldType: String
     multipleValues: Boolean
     oneUserMultipleValues: Boolean
   ): Field
@@ -247,6 +259,7 @@ type Field @aws_api_key @aws_cognito_user_pools {
   updatedBy: ID
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  relationId: ID
 }
 
 type FieldValues @aws_api_key @aws_cognito_user_pools {

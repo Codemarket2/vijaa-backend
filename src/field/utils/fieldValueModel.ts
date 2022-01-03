@@ -3,6 +3,7 @@ import { ISchema } from '../../utils/cutomTypes';
 
 interface IFieldValue extends ISchema {
   field: string;
+  parentId: string;
   value: string;
   valueNumber: number;
   valueBoolean: boolean;

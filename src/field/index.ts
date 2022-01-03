@@ -80,6 +80,18 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         });
         return await field.populate(fieldPopulate).execPopulate();
       }
+
+      case 'updateFieldByRelationId': {
+        const field: any = await Field.findOneAndUpdate(
+          { relationId: args.relationId, parentId: args.parentId },
+          args,
+          {
+            new: true,
+            runValidators: true,
+          },
+        );
+        return await field.populate(fieldPopulate).execPopulate();
+      }
       case 'updateFieldPosition': {
         const field: any = await Field.findByIdAndUpdate(
           args._id,

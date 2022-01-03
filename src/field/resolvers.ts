@@ -2,6 +2,7 @@ export const fieldResolvers = {
   'Query getFieldsByType': 'fieldLambda',
   'Mutation createField': 'fieldLambda',
   'Mutation updateField': 'fieldLambda',
+  'Mutation updateFieldByRelationId': 'fieldLambda',
   'Mutation deleteField': 'fieldLambda',
   'Query getFieldValuesByItem': 'fieldLambda',
   'Query getFieldValue': 'fieldLambda',
