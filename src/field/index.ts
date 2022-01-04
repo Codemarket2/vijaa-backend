@@ -107,6 +107,10 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         await Field.findByIdAndDelete(args._id);
         return true;
       }
+      case 'deleteFieldByRelationId': {
+        await Field.findOneAndRemove({ relationId: args.relationId });
+        return true;
+      }
       case 'getFieldValuesByItem': {
         const { page = 1, limit = 20, parentId, field, onlyShowByUser = null } = args;
         const tempFilter: any = {};

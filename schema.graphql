@@ -75,6 +75,7 @@ type Mutation {
     relationId: ID
     _id: ID
     label: String!
+    fieldLabel: String
     fieldType: String!
     typeId: ID
     multipleValues: Boolean
@@ -84,6 +85,7 @@ type Mutation {
     _id: ID!
     relationId: ID
     label: String
+    fieldLabel: String
     fieldType: String
     typeId: ID
     multipleValues: Boolean
@@ -100,6 +102,7 @@ type Mutation {
   ): Field
   updateFieldPosition(_id: ID!, position: Float!): Field
   deleteField(_id: ID!): Boolean
+  deleteFieldByRelationId(relationId: ID!): Boolean
   createFieldValue(
     parentId: ID!
     field: ID!
@@ -243,6 +246,7 @@ type Field @aws_api_key @aws_cognito_user_pools {
   parentId: ID
   position: Float
   label: String
+  fieldLabel: String
   multipleValues: Boolean
   oneUserMultipleValues: Boolean
   fieldType: String
