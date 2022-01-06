@@ -34,8 +34,7 @@ type Query {
   getMyBookmarks(page: Int, limit: Int, sortBy: String, search: String): Bookmarks
   getBookmark(_id: ID!): Bookmark
   getFieldsByType(parentId: ID!, page: Int, sortBy: String, limit: Int, search: String): Fields
-    @aws_api_key
-    @aws_cognito_user_pools
+  getFieldByRelationId(relationId: ID!): Field @aws_api_key @aws_cognito_user_pools
   getFieldValuesByItem(
     parentId: ID!
     field: ID!
@@ -88,15 +87,6 @@ type Mutation {
     fieldLabel: String
     fieldType: String
     typeId: ID
-    multipleValues: Boolean
-    oneUserMultipleValues: Boolean
-  ): Field
-  updateFieldByRelationId(
-    relationId: ID!
-    parentId: ID!
-    typeId: ID
-    label: String
-    fieldType: String
     multipleValues: Boolean
     oneUserMultipleValues: Boolean
   ): Field
