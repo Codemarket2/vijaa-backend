@@ -9,7 +9,7 @@ export const sendResponseNotification = async (form: any, response: any) => {
   const payload = {
     userId: createdBy,
     title: form.name,
-    description: `${submitedBy} has submitted a new response on ${form.name} form.`,
+    description: `${submitedBy} has submitted a new response on ${form?.name} From ${response?.parentId?.title} Page.`,
     link: `/response/${response?._id}`,
   };
   await sendNotification(payload);
