@@ -7,7 +7,7 @@ schema {
 type Subscription {
   addedPost: Post @aws_subscribe(mutations: ["createPost", "updatePost"])
   addedComment(parentId: ID!): Comment @aws_subscribe(mutations: ["createComment", "updateComment"])
-  addedField(parentId: ID!): Field @aws_subscribe(mutations: ["createField", "updateField"])
+  addedField(parentId: ID): Field @aws_subscribe(mutations: ["createField", "updateField"])
   addedFieldValue(parentId: ID!): FieldValue
     @aws_subscribe(mutations: ["createFieldValue", "updateFieldValue"])
   addedLike: Like @aws_subscribe(mutations: ["createLike"])
