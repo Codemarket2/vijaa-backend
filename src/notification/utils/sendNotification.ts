@@ -44,7 +44,7 @@ export const sendNotification = async (payload: payload) => {
       const notification = await NotificationModel.create(payload);
       const user = await User.findById(payload.userId);
       await emailNotification(payload, user);
-      await mobileNotification(payload, user);
+      // await mobileNotification(payload, user);
       await pushNotification(payload);
     } catch (error) {
       console.error(error.message);
