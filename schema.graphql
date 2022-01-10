@@ -83,6 +83,7 @@ type Mutation {
   updateField(
     _id: ID!
     relationId: ID
+    parentId: ID
     label: String
     fieldLabel: String
     fieldType: String
