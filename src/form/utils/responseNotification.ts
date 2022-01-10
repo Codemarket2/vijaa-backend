@@ -18,26 +18,5 @@ export const sendResponseNotification = async (form: any, response: any) => {
     link: `/response/${response?._id}`,
   };
 
-  if (form.name === 'Send Email Form') {
-    sendEmailToSelectedUser(form, response);
-  } else await sendNotification(payload);
-};
-const sendEmailToSelectedUser = (form: any, response: any) => {
-  const { fields } = form;
-  const { values } = response;
-  const emails = values.filter((d) => d.field == fields[0]._id).map((d) => d.value);
-  const subject = values.filter((d) => d.field == fields[1]._id)[0].value;
-  const message = values.filter((d) => d.field == fields[2]._id)[0].value;
-
-  const { SENDER_EMAIL = '' } = process.env;
-
-  const emailPayload = {
-    from: SENDER_EMAIL,
-    to: emails,
-    body: message,
-    subject: subject,
-  };
-  sendEmail(emailPayload)
-    .then(() => console.log('Email Send!'))
-    .catch((e) => console.log(e.message));
+  await sendNotification(payload);
 };
