@@ -8,7 +8,7 @@ type Subscription {
   addedPost: Post @aws_subscribe(mutations: ["createPost", "updatePost"])
   addedComment(parentId: ID!): Comment @aws_subscribe(mutations: ["createComment", "updateComment"])
   addedField(parentId: ID): Field @aws_subscribe(mutations: ["createField", "updateField"])
-  addedFieldValue(parentId: ID!): FieldValue
+  addedFieldValue(parentId: ID): FieldValue
     @aws_subscribe(mutations: ["createFieldValue", "updateFieldValue"])
   addedLike: Like @aws_subscribe(mutations: ["createLike"])
 }
@@ -95,7 +95,9 @@ type Mutation {
   deleteField(_id: ID!): Boolean
   deleteFieldByRelationId(relationId: ID!): Boolean
   createFieldValue(
+    _id: ID
     parentId: ID!
+    relationId: ID
     field: ID!
     value: String
     valueDate: AWSDateTime
@@ -107,6 +109,9 @@ type Mutation {
   updateFieldValue(
     _id: ID!
     value: String
+    parentId: ID
+    field: ID
+    relationId: ID
     valueDate: AWSDateTime
     valueNumber: Int
     valueBoolean: Boolean
@@ -257,6 +262,7 @@ type FieldValues @aws_api_key @aws_cognito_user_pools {
 type FieldValue @aws_api_key @aws_cognito_user_pools {
   _id: ID
   parentId: ID
+  relationId: ID
   field: ID
   value: String
   valueDate: AWSDateTime
