@@ -48,6 +48,10 @@ const fieldSchema = new Schema<IField>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    options: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
   },
   { timestamps: true },
 );
