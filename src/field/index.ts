@@ -62,6 +62,13 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           count,
         };
       }
+
+      case 'getFieldByRelationId': {
+        return await Field.findOne({
+          relationId: args.relationId,
+        }).populate(fieldPopulate);
+      }
+
       case 'createField': {
         let position = 1;
         const tempFields = await Field.find({ parentId: args.parentId })
@@ -93,6 +100,10 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       }
       case 'deleteField': {
         await Field.findByIdAndDelete(args._id);
+        return true;
+      }
+      case 'deleteFieldByRelationId': {
+        await Field.findOneAndRemove({ relationId: args.relationId });
         return true;
       }
       case 'getFieldValuesByItem': {
