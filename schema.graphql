@@ -94,7 +94,6 @@ type Mutation {
   ): Field
   updateFieldPosition(_id: ID!, position: Float!): Field
   deleteField(_id: ID!): Boolean
-  deleteFieldByRelationId(relationId: ID!): Boolean
   createFieldValue(
     _id: ID
     parentId: ID!
