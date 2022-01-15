@@ -125,11 +125,11 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         }
 
         const data = await ResponseModel.find(filter)
+          .sort({ createdAt: -1 })
           .populate(responsePopulate)
           .limit(limit * 1)
           .skip((page - 1) * limit);
         const count = await ResponseModel.countDocuments(filter);
-        console.log(count);
         return {
           data,
           count,
@@ -160,6 +160,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       case 'getMyResponses': {
         const { page = 1, limit = 20 } = args;
         const data = await ResponseModel.find({ createdBy: user._id })
+          .sort({ createdAt: -1 })
           .populate(myResponsePopulate)
           .limit(limit * 1)
           .skip((page - 1) * limit);
@@ -171,7 +172,6 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       }
       case 'createBulkResponses': {
         const { formId, fileUrl, map, parentId, createdBy } = args;
-        console.log(args);
 
         const filter: any = Object.values(map);
         const fields = Object.keys(map);
@@ -210,8 +210,6 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         // if (!(process.env.NODE_ENV === 'test')) {
         //   await sendResponseNotification(form, responseCreated);
         // }
-
-        console.log('responseCreated: ', responseCreated);
 
         return true;
       }
