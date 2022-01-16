@@ -3,13 +3,27 @@ type Notification @aws_api_key @aws_cognito_user_pools {
   title: String
   description: String
   link: String
+  formId: ID
+  parentId: ID
 }
 
 type Mutation {
-  sendNotification(userId: ID!, title: String!, description: String, link: String): Notification
-    @aws_api_key
-    @aws_cognito_user_pools
-  callNotification(userId: ID!, title: String!, description: String, link: String): Notification
+  sendNotification(
+    userId: ID!
+    title: String!
+    description: String
+    link: String
+    formId: ID!
+    parentId: ID
+  ): Notification @aws_api_key @aws_cognito_user_pools
+  callNotification(
+    userId: ID!
+    title: String!
+    description: String
+    link: String
+    formId: ID!
+    parentId: ID
+  ): Notification
 }
 
 type Subscription {

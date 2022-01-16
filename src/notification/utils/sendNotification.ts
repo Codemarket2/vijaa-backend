@@ -14,6 +14,8 @@ const notificationMuattion = gql`
       title
       description
       link
+      formId
+      parentId
     }
   }
 `;
@@ -25,6 +27,8 @@ type payload = {
   title: string;
   description?: string;
   link?: string;
+  formId?: string;
+  parentId?: string;
 };
 
 export const sendNotification = async (payload: payload) => {
@@ -59,7 +63,7 @@ const mobileNotification = async (payload: payload, user: any) => {
       ${payload.description}.
     `;
   const mobilePayload = {
-    to: '+918294008226' || user.mobile,
+    to: user.mobile,
     from: '+16673032366',
     body: messageBody,
   };
