@@ -92,6 +92,7 @@ const emailNotification = async (payload: payload, user: any) => {
       Dear ${user.name}, 
     
       ${payload.description}.
+       <a href='https://boossti.com${payload.link}'><button> View </button></a> 
     `;
 
   const emailPayload = {
