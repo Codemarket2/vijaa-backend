@@ -22,17 +22,18 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       args = { ...args, updatedBy: user._id };
     }
 
+    // sendEmail: process.env.SENDER_EMAIL,
     switch (fieldName) {
       case 'createSendEmail':
         {
           const response = await EmailModel.create(args);
-          // await sendEmail({
-          //   from: args.senderEmail,
-          //   to: args.receiverEmail,
-          //   body: args.body,
-          //   subject: args.subject,
-          // });
-          console.log(response);
+          await sendEmail({
+            from: args.senderEmail,
+            to: args.receiverEmail,
+            body: args.body,
+            subject: args.subject,
+          });
+          return response;
         }
         break;
       default:

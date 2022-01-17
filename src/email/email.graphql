@@ -1,16 +1,17 @@
 type Mutation {
   createSendEmail(
-    senderEmail: String
-    body: String
-    subject: String
-    receiverEmail: [String]
+    senderEmail: String!
+    body: String!
+    subject: String!
+    receiverEmail: [String]!
   ): Email
 }
 
-type Email {
+type Email @aws_api_key @aws_cognito_user_pools {
   _id: ID
   body: String
   subject: String
   senderEmail: String
   receiverEmail: [String]
+  createdBy: User
 }

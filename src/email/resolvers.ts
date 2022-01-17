@@ -1,3 +1,3 @@
 export const emailResolvers = {
-  'Mutation createSendEmail': 'formLambda',
+  'Mutation createSendEmail': 'emailLambda',
 };

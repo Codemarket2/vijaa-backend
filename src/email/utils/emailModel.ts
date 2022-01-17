@@ -9,10 +9,28 @@ interface IEmail {
 
 const emailSchema = new Schema<IEmail>(
   {
-    senderEmail: String,
-    receiverEmail: [String],
-    subject: String,
-    body: String,
+    senderEmail: {
+      type: String,
+      required: true,
+    },
+    receiverEmail: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+    subject: {
+      type: String,
+      required: true,
+    },
+    body: {
+      type: String,
+      required: true,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { timestamps: true },
 );
