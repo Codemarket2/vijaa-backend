@@ -1,0 +1,16 @@
+type Mutation {
+  createSendEmail(
+    senderEmail: String
+    body: String
+    subject: String
+    receiverEmail: [String]
+  ): Email
+}
+
+type Email {
+  _id: ID
+  body: String
+  subject: String
+  senderEmail: String
+  receiverEmail: [String]
+}

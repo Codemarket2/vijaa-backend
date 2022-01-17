@@ -32,6 +32,6 @@
     "mongodb-client-encryption": "^1.2.6",
     "mongoose": "^5.13.2",
     "slugify": "^1.6.0",
-    "twilio": "^3.72.0"
+    "twilio": "^3.73.0"
   }
 }
