@@ -22,7 +22,33 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       return args;
     }
     case 'getMyNotifications': {
-      const data = await NotificationModel.find({ userId: user._id }).sort({ createdAt: -1 });
+      const data = await NotificationModel.aggregate([
+        {
+          $match: {
+            userId: user._id,
+          },
+        },
+        {
+          $group: {
+            _id: '$formId',
+            lastNotification: {
+              $first: '$$ROOT',
+            },
+            notificationCount: { $sum: 1 },
+          },
+        },
+        {
+          $lookup: {
+            from: 'forms',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'formId',
+          },
+        },
+        {
+          $unwind: '$formId',
+        },
+      ]);
       const count = await NotificationModel.countDocuments({ userId: user._id });
       return {
         data,
