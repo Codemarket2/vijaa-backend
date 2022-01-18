@@ -49,10 +49,8 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           $unwind: '$formId',
         },
       ]);
-      const count = await NotificationModel.countDocuments({ userId: user._id });
       return {
         data,
-        count,
       };
     }
     default:
