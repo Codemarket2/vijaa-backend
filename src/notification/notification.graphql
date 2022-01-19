@@ -35,6 +35,14 @@ type Notifications {
   count: Int
 }
 
+type NotificationListItem {
+  _id: ID
+  lastNotification: Notification
+  notificationCount: Int
+  formId: Form
+}
+
 type Query {
-  getMyNotifications: Notifications
+  getMyNotifications(formId: ID!): Notifications
+  getNotificationList: [NotificationListItem]
 }

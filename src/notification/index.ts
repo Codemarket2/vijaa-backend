@@ -22,6 +22,20 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       return args;
     }
     case 'getMyNotifications': {
+      const data = await NotificationModel.find({ userId: user._id, formId: args.formId }).sort({
+        createdAt: -1,
+      });
+      const count = await NotificationModel.countDocuments({
+        userId: user._id,
+        formId: args.formId,
+      });
+      console.log({ data, count });
+      return {
+        data,
+        count,
+      };
+    }
+    case 'getNotificationList': {
       const data = await NotificationModel.aggregate([
         {
           $match: {
@@ -49,9 +63,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           $unwind: '$formId',
         },
       ]);
-      return {
-        data,
-      };
+      return data;
     }
     default:
       throw new Error('Something went wrong! Please check your Query or Mutation');
