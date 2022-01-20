@@ -16,6 +16,7 @@ const notificationMuattion = gql`
       link
       formId
       parentId
+      isClicked
     }
   }
 `;
@@ -47,9 +48,9 @@ export const sendNotification = async (payload: payload) => {
     try {
       const notification = await NotificationModel.create(payload);
       const user = await User.findById(payload.userId);
-      await emailNotification(payload, user);
+      // await emailNotification(payload, user);
       // await mobileNotification(payload, user);
-      await pushNotification(payload);
+      // await pushNotification(payload);
     } catch (error) {
       console.error(error.message);
     }

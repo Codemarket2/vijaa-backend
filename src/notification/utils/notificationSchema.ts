@@ -26,6 +26,10 @@ const notificationSchema = new Schema<INotification>(
     parentId: {
       type: Schema.Types.ObjectId,
     },
+    isClicked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
