@@ -1,8 +1,7 @@
 import { DB } from '../utils/DB';
 import { getCurrentUser } from '../utils/authentication';
 import { AppSyncEvent } from '../utils/cutomTypes';
-import EmailModel from './utils/emailModel';
-import { sendEmail } from '../utils/email';
+import ContactModel from './utils/contactModel';
 import { userPopulate } from '../utils/populate';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
@@ -14,36 +13,18 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     } = event;
     const user = await getCurrentUser(identity);
     let args = { ...event.arguments };
-    // const { page = 1, limit = 20, search = '', active = null, sortBy = '-createdAt' } = args;
+
     if (fieldName.toLocaleLowerCase().includes('create') && user && user._id) {
       args = { ...args, createdBy: user._id };
     } else if (fieldName.toLocaleLowerCase().includes('update') && user && user._id) {
       args = { ...args, updatedBy: user._id };
     }
 
-    // sendEmail: process.env.SENDER_EMAIL,
     switch (fieldName) {
-      case 'createSendEmail':
+      case 'createContact':
         {
-          let response = await EmailModel.create(args);
-          response = await response.populate(userPopulate).execPopulate();
-          await sendEmail({
-            from: args.senderEmail,
-            to: args.receiverEmail,
-            body: args.body,
-            subject: args.subject,
-          });
-          return response;
-        }
-        break;
-      case 'getAllEmails':
-        {
-          const data = await EmailModel.find().populate(userPopulate);
-          const count = await EmailModel.countDocuments();
-          return {
-            data,
-            count,
-          };
+          const response = await ContactModel.create(args);
+          return await response.populate(userPopulate).execPopulate();
         }
         break;
       default:

@@ -35,4 +35,5 @@ const emailSchema = new Schema<IEmail>(
   { timestamps: true },
 );
 
-export const EmailModel = model<IEmail>('Email', emailSchema);
+const EmailModel = model<IEmail>('Email', emailSchema);
+export default EmailModel;

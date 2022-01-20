@@ -127,13 +127,43 @@ type Mutation {
   createLike(parentId: ID!): Like
   updateLike(_id: ID!): Like
   deleteLike(parentId: ID!): Boolean
+
+  createContact(
+    title: String
+    firstName: String
+    phone: String
+    lastName: String
+    email: String!
+    businessName: String
+    mailingListName: String!
+    extraField: [extraFieldNameInput]
+  ): Contact
 }
 
 type Bookmarks {
   data: [Bookmark]
   count: Int
 }
-
+input extraFieldNameInput {
+  fieldName: String
+  fieldValue: String
+}
+type extraFieldName {
+  fieldName: String
+  fieldValue: String
+}
+type Contact @aws_api_key @aws_cognito_user_pools {
+  _id: ID
+  title: String
+  firstName: String
+  lastName: String
+  email: String
+  businessName: String
+  mailingListName: String
+  phone: String
+  extraField: [extraFieldName]
+  createdBy: User
+}
 type Bookmark {
   _id: ID
   parentId: String
