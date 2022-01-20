@@ -29,7 +29,6 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         userId: user._id,
         formId: args.formId,
       });
-      console.log({ data, count });
       return {
         data,
         count,
@@ -64,6 +63,20 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         },
       ]);
       return data;
+    }
+
+    case 'setIsClicked': {
+      try {
+        const update = await NotificationModel.findByIdAndUpdate(
+          args._id,
+          { isClicked: true },
+          { new: true, runValidators: true },
+        );
+        return true;
+      } catch (error) {
+        console.log(error.message);
+      }
+      return false;
     }
     default:
       throw new Error('Something went wrong! Please check your Query or Mutation');

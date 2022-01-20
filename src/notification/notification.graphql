@@ -26,6 +26,7 @@ type Mutation {
     formId: ID!
     parentId: ID
   ): Notification
+  setIsClicked(_id: ID!): Boolean
 }
 
 type Subscription {
