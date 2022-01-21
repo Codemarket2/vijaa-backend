@@ -27,6 +27,16 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           return await response.populate(userPopulate).execPopulate();
         }
         break;
+      case 'getAllContacts':
+        {
+          const data = await ContactModel.find().populate(userPopulate);
+          const count = await ContactModel.countDocuments();
+          return {
+            data,
+            count,
+          };
+        }
+        break;
       default:
         throw new Error('Something went wrong! Please check your Query or Mutation');
     }

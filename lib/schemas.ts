@@ -5,4 +5,5 @@ export default [
   'src/list/list.graphql',
   'src/field/field.graphql',
   'src/email/email.graphql',
+  'src/contact/contact.graphql',
 ];
