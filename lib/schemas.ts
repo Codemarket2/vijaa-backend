@@ -5,3 +5,4 @@ export default [
   'src/list/list.graphql',
   'src/field/field.graphql',
 ];
+

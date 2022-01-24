@@ -8,6 +8,7 @@ import { getCurrentUser } from '../utils/authentication';
 import { AppSyncEvent } from '../utils/cutomTypes';
 import getAdminFilter from '../utils/adminFilter';
 import { userPopulate } from '../utils/populate';
+import { User } from '../user/utils/userModel';
 
 const listItemPopulate = [userPopulate, { path: 'types', select: 'title slug' }];
 
@@ -27,7 +28,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     if (Object.prototype.hasOwnProperty.call(args, 'title')) {
       args = { ...args, slug: slugify(args.title, { lower: true }) };
     }
-
+    console.log(fieldName)
     switch (fieldName) {
       case 'getListTypes': {
         const { page = 1, limit = 20, search = '', active = null } = args;
@@ -56,6 +57,42 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       }
       case 'getListType': {
         return await ListType.findById(args._id).populate(userPopulate);
+      }
+      case 'getMentionItems': {
+        const { search = '' } = args;
+        let listItems: any = await ListItem.find({
+          $or: [
+            { title: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
+          ],
+        })
+          .populate(listItemPopulate)
+          .limit(5)
+        listItems = listItems.map(val => (
+          {
+            _id: val?._id,
+            title: val?.title,
+            category: val?.types[0].title,
+            type: "listitem"
+          }
+        ))
+        let users: any = await User.find({
+          $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } },
+          ],
+        })
+          .limit(5)
+        users = users.map(val => (
+          {
+            _id: val?._id,
+            title: val?.name,
+            category: "users",
+            type: "user"
+          }
+        ))
+        console.log("users", users)
+        return [...listItems, ...users]
       }
       case 'createListType': {
         const listType = await ListType.create(args);
