@@ -37,6 +37,22 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           };
         }
         break;
+      case 'getContact':
+        {
+          return await ContactModel.findById(args).populate(userPopulate);
+        }
+        break;
+      case 'updateContact': {
+        const contact = await ContactModel.findByIdAndUpdate(args._id, args, {
+          new: true,
+          runValidators: true,
+        });
+        return await contact?.populate(userPopulate).execPopulate();
+      }
+      case 'deleteContact': {
+        await ContactModel.findByIdAndDelete(args._id);
+        return true;
+      }
       default:
         throw new Error('Something went wrong! Please check your Query or Mutation');
     }

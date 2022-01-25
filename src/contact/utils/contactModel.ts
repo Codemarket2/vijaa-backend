@@ -1,7 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-// first name, last name, email, phone#, businessName, title
-
 interface IContact {
   title: string;
   firstName: string;
@@ -9,16 +7,11 @@ interface IContact {
   email: string;
   phone: string;
   businessName: string;
-  mailingListName: string;
   extraField: [{ fieldName: string; fieldValue: string }];
 }
 
 const contactSchema = new Schema<IContact>(
   {
-    mailingListName: {
-      type: String,
-      required: true,
-    },
     title: {
       type: String,
     },
@@ -33,6 +26,7 @@ const contactSchema = new Schema<IContact>(
     },
     firstName: {
       type: String,
+      required: true,
     },
 
     lastName: {

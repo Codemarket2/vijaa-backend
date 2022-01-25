@@ -1,18 +1,30 @@
 type Query {
   getAllContacts: Contacts
+  getContact(_id: ID!): Contact
 }
 
 type Mutation {
   createContact(
     title: String
-    firstName: String
+    firstName: String!
     phone: String
     lastName: String
     email: String!
     businessName: String
-    mailingListName: String!
     extraField: [extraFieldNameInput]
   ): Contact
+  updateContact(
+    _id: ID!
+    title: String
+    firstName: String
+    phone: String
+    lastName: String
+    email: String
+    businessName: String
+    extraField: [extraFieldNameInput]
+  ): Contact
+
+  deleteContact(_id: ID!): Boolean
 }
 
 input extraFieldNameInput {
@@ -30,7 +42,6 @@ type Contact @aws_api_key @aws_cognito_user_pools {
   lastName: String
   email: String
   businessName: String
-  mailingListName: String
   phone: String
   extraField: [extraFieldName]
   createdBy: User
