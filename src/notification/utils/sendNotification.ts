@@ -15,6 +15,7 @@ const notificationMuattion = gql`
       description
       link
       formId
+      threadId
       parentId
       isClicked
     }
@@ -30,6 +31,7 @@ type payload = {
   link?: string;
   formId?: string;
   parentId?: string;
+  threadId?: string;
 };
 
 export const sendNotification = async (payload: payload) => {
@@ -93,7 +95,7 @@ const emailNotification = async (payload: payload, user: any) => {
       Dear ${user.name}, 
     
       ${payload.description}.
-       <a href='https://boossti.com${payload.link}'><button> View </button></a> 
+       <a href='https://boossti.com${payload?.link || '/'}'><button> View </button></a> 
     `;
 
   const emailPayload = {

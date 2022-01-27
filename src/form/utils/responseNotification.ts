@@ -15,6 +15,7 @@ export const sendResponseNotification = async (form: any, response: any) => {
     description: desc,
     link: `/response/${response?._id}`,
     formId: form._id,
+    threadId: form._id,
     parentId: form.parentId,
   };
 
