@@ -1,51 +1,38 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import { valueSchema } from '../../form/utils/responseModel';
+import { ISchema } from '../../utils/cutomTypes';
 
-interface IContact {
-  title: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  businessName: string;
-  extraField: [{ fieldName: string; fieldValue: string }];
+export interface IValue {
+  field: string;
+  value: string;
+  valueNumber: number;
+  valueBoolean: boolean;
+  valueDate: Date;
+  itemId: string;
+  values: [string];
+}
+export interface IResponse extends ISchema {
+  values: [IValue];
 }
 
-const contactSchema = new Schema<IContact>(
+export const contactSchema = new Schema<IResponse>(
   {
-    title: {
-      type: String,
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'ListItem',
     },
-    extraField: [
-      {
-        fieldName: String,
-        fieldValue: String,
-      },
-    ],
-    phone: {
-      type: String,
-    },
-    firstName: {
-      type: String,
-      required: true,
-    },
-
-    lastName: {
-      type: String,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
-    businessName: {
-      type: String,
-    },
+    values: [valueSchema],
     createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      // required: true,
+    },
+    updatedBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
   },
   { timestamps: true },
 );
-
-const ContactModel = model<IContact>('Contact', contactSchema);
+const ContactModel = model<IResponse>('Contact', contactSchema);
 export default ContactModel;

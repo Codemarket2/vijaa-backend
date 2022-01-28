@@ -43,7 +43,7 @@ export const valueSchema = new Schema({
   },
 });
 
-const responseSchema = new Schema<IResponse>(
+export const responseSchema = new Schema<IResponse>(
   {
     formId: {
       type: Schema.Types.ObjectId,

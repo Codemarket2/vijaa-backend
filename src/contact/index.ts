@@ -2,7 +2,7 @@ import { DB } from '../utils/DB';
 import { getCurrentUser } from '../utils/authentication';
 import { AppSyncEvent } from '../utils/cutomTypes';
 import ContactModel from './utils/contactModel';
-import { userPopulate } from '../utils/populate';
+import { formPopulate, responsePopulate } from '../form/index';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -24,13 +24,32 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       case 'createContact':
         {
           const response = await ContactModel.create(args);
-          return await response.populate(userPopulate).execPopulate();
+          return await response.populate(formPopulate).execPopulate();
         }
         break;
       case 'getAllContacts':
         {
-          const data = await ContactModel.find().populate(userPopulate);
-          const count = await ContactModel.countDocuments();
+          const { page = 1, limit = 20, formId, parentId, search = '', formField } = args;
+          let filter: any = { formId };
+          if (parentId) {
+            filter = { ...filter, parentId };
+          }
+          if (search && formField) {
+            console.warn('filter');
+            filter = {
+              ...filter,
+              $and: [
+                { 'values.value': { $regex: search, $options: 'i' } },
+                { 'values.field': formField },
+              ],
+            };
+          }
+          const data = await ContactModel.find(filter)
+            .sort({ createdAt: -1 })
+            .populate(responsePopulate)
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+          const count = await ContactModel.countDocuments(filter);
           return {
             data,
             count,
@@ -39,7 +58,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         break;
       case 'getContact':
         {
-          return await ContactModel.findById(args).populate(userPopulate);
+          return await ContactModel.findById(args._id).populate(responsePopulate);
         }
         break;
       case 'updateContact': {
@@ -47,11 +66,11 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           new: true,
           runValidators: true,
         });
-        return await contact?.populate(userPopulate).execPopulate();
+        return await contact?.populate(responsePopulate).execPopulate();
       }
       case 'deleteContact': {
         await ContactModel.findByIdAndDelete(args._id);
-        return true;
+        return args._id;
       }
       default:
         throw new Error('Something went wrong! Please check your Query or Mutation');

@@ -1,52 +1,52 @@
 type Query {
-  getAllContacts: Contacts
+  getAllContacts(parentId: ID, page: Int, limit: Int, search: String, formField: ID): Contacts
+    @aws_api_key
+    @aws_cognito_user_pools
   getContact(_id: ID!): Contact
 }
 
 type Mutation {
-  createContact(
-    title: String
-    firstName: String!
-    phone: String
-    lastName: String
-    email: String!
-    businessName: String
-    extraField: [extraFieldNameInput]
-  ): Contact
-  updateContact(
-    _id: ID!
-    title: String
-    firstName: String
-    phone: String
-    lastName: String
-    email: String
-    businessName: String
-    extraField: [extraFieldNameInput]
-  ): Contact
-
-  deleteContact(_id: ID!): Boolean
+  createContact(parentId: ID, values: [FieldValue2Input]): Contact
+  updateContact(_id: ID!, values: [FieldValue2Input]): Contact
+  deleteContact(_id: ID!): ID!
 }
 
-input extraFieldNameInput {
-  fieldName: String
-  fieldValue: String
+type FieldValue2 @aws_api_key @aws_cognito_user_pools {
+  _id: ID
+  field: String
+  value: String
+  valueNumber: Float
+  valueBoolean: Boolean
+  valueDate: AWSDateTime
+  itemId: ListItem
+  media: [Media]
+  response: Response
+  values: [String]
 }
-type extraFieldName {
-  fieldName: String
-  fieldValue: String
+
+input FieldValue2Input {
+  _id: ID
+  field: String
+  value: String
+  valueNumber: Float
+  valueBoolean: Boolean
+  valueDate: AWSDateTime
+  itemId: ID
+  media: [MediaInput]
+  response: ID
+  values: [String]
 }
+
 type Contact @aws_api_key @aws_cognito_user_pools {
   _id: ID
-  title: String
-  firstName: String
-  lastName: String
-  email: String
-  businessName: String
-  phone: String
-  extraField: [extraFieldName]
+  parentId: ListItem
+  values: [FieldValue2]
   createdBy: User
+  updatedBy: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 type Contacts @aws_api_key @aws_cognito_user_pools {
-  data: [Contact]
   count: Int
+  data: [Response]
 }
