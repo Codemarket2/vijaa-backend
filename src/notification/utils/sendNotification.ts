@@ -48,8 +48,12 @@ export const sendNotification = async (payload: payload) => {
       },
     });
     try {
+      //
+      // newpayload
       const notification = await NotificationModel.create(payload);
+
       const user = await User.findById(payload.userId);
+      // User.find({_id: {$in:  payload.userId }})
       await emailNotification(payload, user);
       // await mobileNotification(payload, user);
       // await pushNotification(payload);
