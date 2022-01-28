@@ -42,7 +42,7 @@ export const sendCommentNotification = async (comment) => {
           userId: `${parentComment?.createdBy}`,
           title: `New Reply on your comment.`,
           description: `${comment?.createdBy?.name} replied to your comment`,
-          link: `/comment/${parentComment?._id}`,
+          // link: `/comment/${parentComment?._id}`,
           threadId: parentComment?.threadId,
         };
         await sendNotification(payload);
@@ -52,7 +52,7 @@ export const sendCommentNotification = async (comment) => {
           userId: `${post?.createdBy?._id}`,
           title: 'New Comment on Your Post',
           description: `${comment?.createdBy?.name} commented on your post`,
-          link: `/comment/${comment?._id}`,
+          // link: `/comment/${comment?._id}`,
           threadId: comment?.threadId,
         };
         await sendNotification(payload);
