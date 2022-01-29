@@ -25,7 +25,7 @@ const notificationMuattion = gql`
 const { GRAPHQL_API_URL = '', GRAPHQL_API_KEY = '', SENDER_EMAIL = '' } = process.env;
 
 type payload = {
-  userId: string;
+  userId: string[];
   title: string;
   description?: string;
   link?: string;
@@ -48,45 +48,48 @@ export const sendNotification = async (payload: payload) => {
       },
     });
     try {
-      //
-      // newpayload
-      const notification = await NotificationModel.create(payload);
+      const payloadArray = payload?.userId?.map((uid) => ({
+        ...payload,
+        userId: uid,
+      }));
+      await NotificationModel.create(payloadArray);
 
-      const user = await User.findById(payload.userId);
-      // User.find({_id: {$in:  payload.userId }})
-      await emailNotification(payload, user);
+      // const user = await User.findById(payload.userId);
+      const users = await User.find({ _id: { $in: payload.userId } });
+      await emailNotification(payload, users);
       // await mobileNotification(payload, user);
-      // await pushNotification(payload);
+      await pushNotification(payload, users);
     } catch (error) {
       console.error(error.message);
     }
   }
 };
 
-const mobileNotification = async (payload: payload, user: any) => {
-  const messageBody = `
-      Dear ${user.name},
-    
-      ${payload.description}.
-    `;
-  const mobilePayload = {
-    to: user.mobile,
-    from: '+16673032366',
-    body: messageBody,
-  };
-  try {
-    const messageLog = await sendMessage(mobilePayload);
-    console.log('messageLog', messageLog);
-    // we need to save the message log to our database
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-const pushNotification = async (payload: payload) => {
+// const mobileNotification = async (payload: payload, users: any) => {
+//   const messageBody = `
+//       Dear ${user.name},
+
+//       ${payload.description}.
+//     `;
+//   const mobilePayload = {
+//     to: user.mobile,
+//     from: '+16673032366',
+//     body: messageBody,
+//   };
+//   try {
+//     const messageLog = await sendMessage(mobilePayload);
+//     console.log('messageLog', messageLog);
+//     // we need to save the message log to our database
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+const pushNotification = async (payload: payload, users: any) => {
+  const uids = users?.map((u) => `${u.userId}`);
   const pushPayload = {
     title: payload.title,
     message: payload.description,
-    userIds: [`${payload.userId}`],
+    userIds: uids,
   };
   try {
     await sendPushNotification(pushPayload);
@@ -94,9 +97,10 @@ const pushNotification = async (payload: payload) => {
     console.log(error.message);
   }
 };
-const emailNotification = async (payload: payload, user: any) => {
+const emailNotification = async (payload: payload, users: any) => {
+  const toArray = users?.map((u) => u.email);
   const emailBody = `
-      Dear ${user.name}, 
+      Dear User, 
     
       ${payload.description}.
        <a href='https://boossti.com${payload?.link || '/'}'><button> View </button></a> 
@@ -104,12 +108,12 @@ const emailNotification = async (payload: payload, user: any) => {
 
   const emailPayload = {
     from: SENDER_EMAIL,
-    to: [user.email],
+    to: toArray,
     body: emailBody,
     subject: `New Response on ${payload.title}`,
   };
 
-  user.email &&
+  toArray &&
     sendEmail(emailPayload)
       .then(() => console.log('Email Send!'))
       .catch((e) => console.log(e.message));

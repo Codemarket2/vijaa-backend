@@ -18,7 +18,8 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       return await args;
     }
     case 'callNotification': {
-      await sendNotification(args);
+      const payload = { ...args, userId: [`${args.userId}`] };
+      await sendNotification(payload);
       return args;
     }
     case 'getMyNotifications': {
@@ -37,7 +38,6 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       };
     }
     case 'getNotificationList': {
-      console.log('calling getNotificationList');
       const data = await NotificationModel.aggregate([
         {
           $match: {
@@ -54,7 +54,6 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           },
         },
       ]);
-      console.log('Data', data);
       return data;
     }
 
