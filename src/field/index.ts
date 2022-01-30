@@ -37,7 +37,7 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     } else if (fieldName.toLocaleLowerCase().includes('update') && user && user._id) {
       args = { ...args, updatedBy: user._id };
     }
-
+    console.log(fieldName);
     switch (fieldName) {
       case 'getField': {
         return await Field.findById(args._id).populate(fieldPopulate);
@@ -68,7 +68,9 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
         if (onlyShowByUser) {
           tempFilter.createdBy = user._id;
         }
-        const data = await FieldValue.find({ value: { $regex: `data-id="${_id}"`, $options: 'i' } })
+        const data = await FieldValue.find({
+          value: { $regex: `data-id="${_id}"`, $options: 'i' },
+        })
           .populate(fieldValuePopulate)
           .limit(limit * 1)
           .skip((page - 1) * limit);
