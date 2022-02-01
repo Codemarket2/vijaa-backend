@@ -8,6 +8,7 @@ type Notification @aws_api_key @aws_cognito_user_pools {
   threadId: ID
   formId: ID
   isClicked: Boolean
+  createdAt: AWSDateTime
 }
 
 type Mutation {
