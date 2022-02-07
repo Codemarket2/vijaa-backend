@@ -40,6 +40,7 @@ type Mutation {
     _id: ID!
     types: [ID]
     title: String
+    slug: String
     description: String
     media: [MediaInput]
     fields: [Field2Input]
@@ -67,7 +68,7 @@ type ListType @aws_api_key @aws_cognito_user_pools {
   _id: ID
   title: String
   slug: String
-  description: String
+  description: Strin
   media: [Media]
   fields: [Field2]
   active: Boolean
@@ -87,7 +88,7 @@ type ListItem @aws_api_key @aws_cognito_user_pools {
   title: String
   slug: String
   authenticateUser: Boolean
-  description: String
+  description: Strin
   active: Boolean
   media: [Media]
   fields: [Field2]
