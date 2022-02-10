@@ -29,9 +29,8 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
       fieldName.toLocaleLowerCase().includes('create')
     ) {
       args = { ...args, slug: slugify(args.title, { lower: true }) };
-      console.log(args);
     }
-    console.log(fieldName);
+
     switch (fieldName) {
       case 'getListTypes': {
         const { page = 1, limit = 20, search = '', active = null } = args;
