@@ -16,8 +16,8 @@ export interface IListItem extends ISchema {
 const listItemSchema = new Schema<IListItem>(
   {
     types: [{ type: Schema.Types.ObjectId, ref: 'ListType' }],
-    title: { type: String, unique: true },
-    slug: String,
+    title: String,
+    slug: { type: String, unique: true, required: true },
     description: String,
     media: {
       type: [{ url: String, caption: String }],
@@ -48,8 +48,6 @@ const listItemSchema = new Schema<IListItem>(
   },
   { timestamps: true },
 );
-
-listItemSchema.index({ slug: 1 });
 
 const ListItem = model<IListItem>('ListItem', listItemSchema);
 

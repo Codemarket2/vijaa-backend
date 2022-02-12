@@ -8,6 +8,7 @@ type Query {
   getListItem(_id: ID!): ListItem
   getListTypeBySlug(slug: String!): ListType @aws_api_key @aws_cognito_user_pools
   getListItemBySlug(slug: String!): ListItem @aws_api_key @aws_cognito_user_pools
+  getMentionItems(search: String): [MentionItems]
   getListPageMentions(_id: ID!, page: Int, limit: Int, active: Boolean, search: String): ListItems
 }
 
@@ -22,6 +23,7 @@ type Mutation {
     _id: ID!
     title: String
     description: String
+    slug: String
     media: [MediaInput]
     fields: [Field2Input]
     active: Boolean
@@ -40,6 +42,7 @@ type Mutation {
     _id: ID!
     types: [ID]
     title: String
+    slug: String
     description: String
     media: [MediaInput]
     fields: [Field2Input]
@@ -80,6 +83,13 @@ type ListType @aws_api_key @aws_cognito_user_pools {
 type ListItems @aws_api_key @aws_cognito_user_pools {
   data: [ListItem]
   count: Int
+}
+
+type MentionItems {
+  title: String
+  _id: ID
+  category: String
+  type: String
 }
 
 type ListItem @aws_api_key @aws_cognito_user_pools {
