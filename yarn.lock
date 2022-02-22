@@ -10993,6 +10993,23 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
+twilio@^3.73.0:
+  version "3.73.0"
+  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.73.0.tgz#6ca03625b9a8f2eb0e78ee0a810c01b4849e88dd"
+  integrity sha512-8v+bS6MimxFjfW05RWHMJcGCQQXjMIvIQUkur8VQ2frx1TdXiZs9d9HBWt3YtGx8qKzoxN/okJNamODZ65xkUg==
+  dependencies:
+    axios "^0.21.4"
+    dayjs "^1.8.29"
+    https-proxy-agent "^5.0.0"
+    jsonwebtoken "^8.5.1"
+    lodash "^4.17.21"
+    q "2.0.x"
+    qs "^6.9.4"
+    rootpath "^0.1.2"
+    scmp "^2.1.0"
+    url-parse "^1.5.3"
+    xmlbuilder "^13.0.2"
+
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/type-check/-/type-check-0.4.0.tgz#07b8203bfa7056c0657050e3ccd2c37730bab8f1"
