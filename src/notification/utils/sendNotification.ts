@@ -40,7 +40,6 @@ export const sendNotification = async (payload: payload) => {
         ...payload,
         userId: uid,
       }));
-      console.log('payloadArray', payloadArray);
       await Promise.all(
         payloadArray.map(async (p) => {
           return axios({
