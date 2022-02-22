@@ -35,22 +35,27 @@ type payload = {
 
 export const sendNotification = async (payload: payload) => {
   if (GRAPHQL_API_URL && GRAPHQL_API_KEY) {
-    await axios({
-      url: GRAPHQL_API_URL,
-      method: 'post',
-      headers: {
-        'x-api-key': GRAPHQL_API_KEY,
-      },
-      data: {
-        query: graphql.print(notificationMuattion),
-        variables: payload,
-      },
-    });
     try {
       const payloadArray = payload?.userId?.map((uid) => ({
         ...payload,
         userId: uid,
       }));
+      console.log('payloadArray', payloadArray);
+      await Promise.all(
+        payloadArray.map(async (p) => {
+          return axios({
+            url: GRAPHQL_API_URL,
+            method: 'post',
+            headers: {
+              'x-api-key': GRAPHQL_API_KEY,
+            },
+            data: {
+              query: graphql.print(notificationMuattion),
+              variables: p,
+            },
+          });
+        }),
+      );
       await NotificationModel.create(payloadArray);
 
       // const user = await User.findById(payload.userId);
