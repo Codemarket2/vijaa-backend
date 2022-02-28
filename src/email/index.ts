@@ -1,9 +1,11 @@
 import { DB } from '../utils/DB';
 import { getCurrentUser } from '../utils/authentication';
 import { AppSyncEvent } from '../utils/cutomTypes';
-import EmailModel from './utils/emailModel';
+import EmailModel, { EmailCampaign, EmailTemplate } from './utils/emailModel';
 import { sendEmail } from '../utils/email';
 import { userPopulate } from '../utils/populate';
+import { createTemplate, deleteTemplate, updateTemplate } from './utils/sesCreateEmailTemplate';
+import { sendBulkTemplatedEmail } from './utils/sesTemplateEmail';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -44,6 +46,79 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
             data,
             count,
           };
+        }
+        break;
+      case 'getOneEmailTemplate':
+        {
+          return await EmailTemplate.findById(event.arguments.id);
+        }
+        break;
+      case 'getAllEmailTemplatesByUserId':
+        {
+          return await EmailTemplate.find({ userId: event.arguments.userId });
+        }
+        break;
+      case 'getAllEmailTemplates':
+        {
+          return await EmailTemplate.find();
+        }
+        break;
+      case 'createOneEmailTemplate':
+        {
+          await createTemplate(event.arguments);
+          return await EmailTemplate.create(event.arguments);
+        }
+        break;
+      case 'updateOneEmailTemplate':
+        {
+          await updateTemplate(event.arguments);
+          return await EmailTemplate.findByIdAndUpdate(event.arguments.id, event.arguments, {
+            new: true,
+            runValidators: true,
+          });
+        }
+        break;
+      case 'deleteOneEmailTemplate':
+        {
+          await deleteTemplate(event.arguments);
+          return await EmailTemplate.findByIdAndDelete(event.arguments.id);
+        }
+        break;
+      case 'getOneEmailCampaign':
+        {
+          return await EmailCampaign.findById(event.arguments.id);
+        }
+        break;
+      case 'getAllEmailCampaignsByUserId':
+        {
+          return await EmailCampaign.find({ userId: event.arguments.userId });
+        }
+        break;
+      case 'getAllEmailCampaigns':
+        {
+          return await EmailCampaign.find();
+        }
+        break;
+      case 'createOneEmailCampaign':
+        {
+          const cRes = await sendBulkTemplatedEmail(event.arguments);
+          return await EmailCampaign.create({
+            campaignRes: cRes,
+            ...event.arguments,
+          });
+        }
+        break;
+      case 'updateOneEmailCampaign':
+        {
+          return await EmailCampaign.findByIdAndUpdate(event.arguments.id, event.arguments, {
+            new: true,
+            runValidators: true,
+          });
+        }
+        break;
+      case 'deleteOneEmailCampaign':
+        {
+          return await EmailCampaign.findByIdAndDelete(event.arguments.id);
         }
         break;
       default:

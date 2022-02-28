@@ -35,5 +35,39 @@ const emailSchema = new Schema<IEmail>(
   { timestamps: true },
 );
 
+const emailTemplateSchema = new Schema({
+  userId: {
+    type: String,
+    required: [true, 'User Id is required'],
+  },
+  templateName: String,
+  htmlPart: String,
+  subjectPart: String,
+  textPart: String,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+});
+
+const emailCampaignSchema = new Schema({
+  userId: {
+    type: String,
+    required: [true, 'User Id is required'],
+  },
+  campaignName: String,
+  campaignRes: {},
+  mailingList: String,
+  templateName: String,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+});
+
 const EmailModel = model<IEmail>('Email', emailSchema);
+export const EmailTemplate = model('EmailTemplate', emailTemplateSchema);
+
+export const EmailCampaign = model('EmailCampaign', emailCampaignSchema);
+
 export default EmailModel;

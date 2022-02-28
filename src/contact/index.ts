@@ -2,7 +2,7 @@ import { DB } from '../utils/DB';
 import { getCurrentUser } from '../utils/authentication';
 import { AppSyncEvent } from '../utils/cutomTypes';
 import ContactModel from './utils/contactModel';
-import { formPopulate, responsePopulate } from '../form/index';
+import { fileParser } from '../form/utils/readCsvFile';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -21,52 +21,55 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     }
 
     switch (fieldName) {
-      case 'createContact':
-        {
-          const response = await ContactModel.create(args);
-          return await response.populate(formPopulate).execPopulate();
-        }
-        break;
-      case 'getAllContacts':
-        {
-          const { page = 1, limit = 20, formId, parentId, search = '', formField } = args;
-          let filter: any = { formId };
-          if (parentId) {
-            filter = { ...filter, parentId };
+      case 'createContact': {
+        const response = await ContactModel.create(args);
+        return response;
+      }
+
+      case 'createMailingList': {
+        console.log(args);
+        const { fileUrl, collectionName, map } = args;
+        const filter: any = Object.values(map);
+        const fields = Object.keys(map);
+        const fileData = await fileParser(fileUrl, filter);
+        const responses: any = [];
+
+        fileData?.map((data) => {
+          const response = {};
+          for (let i = 0; i < fields.length; i++) {
+            response[`${fields[i]}`] = data[map[fields[i]]];
           }
-          if (search && formField) {
-            console.warn('filter');
-            filter = {
-              ...filter,
-              $and: [
-                { 'values.value': { $regex: search, $options: 'i' } },
-                { 'values.field': formField },
-              ],
-            };
-          }
-          const data = await ContactModel.find(filter)
-            .sort({ createdAt: -1 })
-            .populate(responsePopulate)
-            .limit(limit * 1)
-            .skip((page - 1) * limit);
-          const count = await ContactModel.countDocuments(filter);
-          return {
-            data,
-            count,
-          };
-        }
-        break;
-      case 'getContact':
-        {
-          return await ContactModel.findById(args._id).populate(responsePopulate);
-        }
-        break;
-      case 'updateContact': {
-        const contact = await ContactModel.findByIdAndUpdate(args._id, args, {
-          new: true,
-          runValidators: true,
+          response['groupName'] = collectionName;
+          // console.log(response);
+          responses.push(response);
         });
-        return await contact?.populate(responsePopulate).execPopulate();
+        const responseCreated = await ContactModel.create(responses);
+        console.log(responseCreated);
+        return true;
+      }
+
+      case 'getAllContacts': {
+        const { page = 1, limit = 50 } = args;
+
+        const data = await ContactModel.find()
+          .sort({ createdAt: -1 })
+          .limit(limit * 1)
+          .skip((page - 1) * limit);
+        const count = await ContactModel.countDocuments();
+        return {
+          data,
+          count,
+        };
+      }
+
+      case 'getContact': {
+        return await ContactModel.findById(args._id);
+      }
+
+      case 'updateContact': {
+        //todo update
+
+        break;
       }
       case 'deleteContact': {
         await ContactModel.findByIdAndDelete(args._id);
