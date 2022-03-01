@@ -6,6 +6,7 @@ import { sendEmail } from '../utils/email';
 import { userPopulate } from '../utils/populate';
 import { createTemplate, deleteTemplate, updateTemplate } from './utils/sesCreateEmailTemplate';
 import { sendBulkTemplatedEmail } from './utils/sesTemplateEmail';
+import ContactModel from '../contact/utils/contactModel';
 
 export const handler = async (event: AppSyncEvent): Promise<any> => {
   try {
@@ -27,13 +28,27 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
     switch (fieldName) {
       case 'createSendEmail':
         {
-          let response = await EmailModel.create(args);
+          const { senderEmail, receiverEmail, body, subject, mailingList } = args;
+          let response, findReceiverEmail;
+          if (mailingList && receiverEmail.length === 0) {
+            const contacts = await ContactModel.find({ groupName: mailingList });
+            findReceiverEmail = contacts.map((contact) => contact.email);
+          } else {
+            findReceiverEmail = receiverEmail;
+          }
+
+          response = await EmailModel.create({
+            senderEmail,
+            receiverEmail: findReceiverEmail,
+            body,
+            subject,
+          });
           response = await response.populate(userPopulate).execPopulate();
           await sendEmail({
-            from: args.senderEmail,
-            to: args.receiverEmail,
-            body: args.body,
-            subject: args.subject,
+            from: senderEmail,
+            to: findReceiverEmail,
+            body: body,
+            subject: subject,
           });
           return response;
         }

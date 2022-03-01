@@ -3,7 +3,8 @@ type Mutation {
     senderEmail: String!
     body: String!
     subject: String!
-    receiverEmail: [String]!
+    receiverEmail: [String]
+    mailingList: String
   ): Email
   createOneEmailCampaign(
     userId: String!
