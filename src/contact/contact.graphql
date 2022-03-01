@@ -1,6 +1,7 @@
 type Query {
   getAllContacts(page: Int, limit: Int): Contacts @aws_api_key @aws_cognito_user_pools
   getContact(_id: ID!): Contact
+  getAllMailingList(page: Int, limit: Int): [MailingList]
 }
 
 type Mutation {
@@ -48,4 +49,9 @@ type Contact @aws_api_key @aws_cognito_user_pools {
 type Contacts @aws_api_key @aws_cognito_user_pools {
   count: Int
   data: [Contact]
+}
+
+type MailingList {
+  _id: String
+  emailCount: String
 }

@@ -61,6 +61,23 @@ export const handler = async (event: AppSyncEvent): Promise<any> => {
           count,
         };
       }
+      case 'getAllMailingList': {
+        const data = await ContactModel.aggregate([
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+          {
+            $group: {
+              _id: '$groupName',
+              emailCount: { $sum: 1 },
+            },
+          },
+        ]);
+        console.log('data', data);
+        return data;
+      }
 
       case 'getContact': {
         return await ContactModel.findById(args._id);
